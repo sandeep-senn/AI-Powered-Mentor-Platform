@@ -121,13 +121,13 @@ Else → regular Gemini response
 
 ## 📸 Screenshots
 
-![Hero](screenshots/Hero.png)
-![Feature](screenshots/feature.png)
-![Code Convert](screenshots/convert.png)
-![Debug](screenshots/debug.png)
-![Chatbot](screenshots/Chatbot.png)
-![Let's Connect](screenshots/connect.png)
-![Footer](screenshots/Footer.png)
+![Hero](./frontend/public/screenshots/Hero.png)
+![Feature](./frontend/public/screenshots/feature.png)
+![Code Convert](./frontend/public/screenshots/convert.png)
+![Debug](./frontend/public/screenshots/debug.png)
+![Chatbot](./frontend/public/screenshots/Chatbot.png)
+![Let's Connect](./frontend/public/screenshots/connect.png)
+![Footer](./frontend/public/screenshots/Footer.png)
 
 
 ## 🧑‍💻 Contribute
