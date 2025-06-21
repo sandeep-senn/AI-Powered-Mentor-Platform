@@ -12,7 +12,7 @@ export default function CodeDebugger() {
     setLoading(true);
     setDebugResult("");
     try {
-      const res = await axios.post("http://localhost:5000/debug-code", {
+      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/debug-code", {
         code,
       });
       const rawReply = res.data.result;

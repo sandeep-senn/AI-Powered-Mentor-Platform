@@ -19,7 +19,7 @@ function CodeConverter() {
     setConvertedCode("");
 
     try {
-      const res = await axios.post("http://localhost:5000/convert-code", {
+      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/convert-code", {
         sourceCode,
         fromLang,
         toLang,
