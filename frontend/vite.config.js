@@ -9,4 +9,9 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  build: {
+    rollupOptions: {
+      external: ['pdfjs-dist', 'three'], // add any problematic module here
+    },
+  },
 })
