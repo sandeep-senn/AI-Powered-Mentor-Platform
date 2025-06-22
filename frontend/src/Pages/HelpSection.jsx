@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function HelpSection() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const navigate = useNavigate();
+
   // On load
   useEffect(() => {
     const savedChat = localStorage.getItem("chatHistory");
@@ -24,34 +27,43 @@ export default function HelpSection() {
   ];
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+  if (!input.trim()) return;
 
-    const userMsg = { role: "user", text: input };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
-    setIsTyping(true);
+  const userMsg = { role: "user", text: input };
+  setMessages((prev) => [...prev, userMsg]);
+  setInput("");
+  setIsTyping(true);
 
-    try {
-      const res = await fetch("https://ai-powered-mentor-platform.onrender.com/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
-      });
+  try {
+    const res = await fetch("https://ai-powered-mentor-platform.onrender.com/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: input }),
+    });
 
-      const data = await res.json();
-      const formattedReply = data.reply.replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong>$1</strong>"
-      );
-      const botMsg = { role: "bot", text: formattedReply };
-      setMessages((prev) => [...prev, botMsg]);
-    } catch (err) {
-      const botMsg = { role: "bot", text: "❌ Error getting response." };
-      setMessages((prev) => [...prev, botMsg]);
-    } finally {
-      setIsTyping(false);
+    const data = await res.json();
+    const reply = data.reply;
+    const lower = reply.toLowerCase();
+
+    // ✅ Auto-redirect based on reply
+    if (lower.includes("go to roadmap")) {
+      navigate("/roadmap");
+    } else if (lower.includes("go to convert")) {
+      navigate("/code-convertor");
+    } else if (lower.includes("go to debug")) {
+      navigate("/code-debug");
     }
-  };
+
+    const formattedReply = reply.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    const botMsg = { role: "bot", text: formattedReply };
+    setMessages((prev) => [...prev, botMsg]);
+  } catch (err) {
+    const botMsg = { role: "bot", text: "❌ Error getting response." };
+    setMessages((prev) => [...prev, botMsg]);
+  } finally {
+    setIsTyping(false);
+  }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -112,7 +124,7 @@ export default function HelpSection() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-gray-700 text-white px-4 py-2 rounded-full max-w-[50%] self-start mr-auto animate-pulse"
+            className="bg-gray-700 text-white px-4 py-2 rounded-full w-fit max-w-[80%] self-start mr-auto animate-pulse"
           >
             Bot is typing...
           </motion.div>
