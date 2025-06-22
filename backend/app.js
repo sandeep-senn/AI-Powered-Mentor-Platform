@@ -25,7 +25,7 @@ app.post('/api/chat', async (req, res) => {
   for (const keyword of roadmapKeywords) {
     if (lower.includes(keyword) && lower.includes("roadmap")) {
       return res.status(200).json({
-      reply: `📍 Here's your roadmap. Go to the 'Learn' section or type "go to roadmap".`
+      reply: "navigate::/roadmap"
       });
     }
   }
@@ -35,7 +35,7 @@ app.post('/api/chat', async (req, res) => {
   for (const keyword of convertKeywords) {
     if (lower.includes(keyword)) {
       return res.status(200).json({
-      reply: `🔄 Want to convert code? 👉 Just click the 'Convert' tab above or type "go to convert".`
+      reply: `navigate::/code-convertor`
       });
     }
   }
@@ -45,7 +45,7 @@ app.post('/api/chat', async (req, res) => {
   for (const keyword of debugKeywords) {
     if (lower.includes(keyword)) {
       return res.status(200).json({
-      reply: `🐞 Need to debug? 👉 Click 'Code Debugger' tab or type "go to debug".`
+      reply: `navigate::/code-convertor`
       });
     }
   }
