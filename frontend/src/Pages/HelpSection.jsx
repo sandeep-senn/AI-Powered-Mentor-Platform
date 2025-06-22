@@ -29,6 +29,7 @@ export default function HelpSection() {
     const userMsg = { role: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setIsTyping(true);
 
     try {
       const res = await fetch("https://ai-powered-mentor-platform.onrender.com/api/chat", {
@@ -37,13 +38,7 @@ export default function HelpSection() {
         body: JSON.stringify({ message: input }),
       });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        return;
-      }
-
       const data = await res.json();
-      // 👇 Replace **text** with <strong>text</strong>
       const formattedReply = data.reply.replace(
         /\*\*(.*?)\*\*/g,
         "<strong>$1</strong>"
@@ -51,37 +46,18 @@ export default function HelpSection() {
       const botMsg = { role: "bot", text: formattedReply };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
+      const botMsg = { role: "bot", text: "❌ Error getting response." };
+      setMessages((prev) => [...prev, botMsg]);
+    } finally {
+      setIsTyping(false);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    handleSend(input);
-    setInput("");
+    handleSend();
   };
 
-  const sendMessage = async () => {
-    if (!userInput.trim()) return;
-
-    const userMsg = { role: "user", text: userInput };
-    setMessages([...messages, userMsg]);
-    setUserInput("");
-    setIsTyping(true); // ✅ Show typing animation
-
-    try {
-      const res = await axios.post("http://localhost:5000/api/chat", {
-        message: userInput,
-      });
-      const botMsg = { role: "bot", text: res.data.reply };
-      setMessages((prev) => [...prev, botMsg]);
-    } catch (err) {
-      const botMsg = { role: "bot", text: "Error getting response." };
-      setMessages((prev) => [...prev, botMsg]);
-    } finally {
-      setIsTyping(false); // ✅ Hide typing animation
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 text-white font-sans px-4 py-10">
