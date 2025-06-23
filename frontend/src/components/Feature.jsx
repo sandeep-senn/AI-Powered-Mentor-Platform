@@ -30,10 +30,10 @@ const features = [
     route: '/roadmap',
   },
   {
-    title: 'Learn Programming Languages',
-    description: 'Master C++, Java, Python, and JavaScript through curated paths.',
+    title: 'Chatbot',
+    description: 'A chatbot that helps you to access our facility',
     icon: <BookOpenText size={28} className="text-yellow-500" />,
-    route: '/learn',
+    route: '/help',
   },
   {
     title: 'Cloud Computing',

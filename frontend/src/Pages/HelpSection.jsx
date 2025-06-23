@@ -44,16 +44,11 @@ export default function HelpSection() {
     const data = await res.json();
     const reply = data.reply;
     const lower = reply.toLowerCase();
-
-    // ✅ Auto-redirect based on reply
-    if (lower.includes("go to roadmap")) {
-      navigate("/roadmap");
-    } else if (lower.includes("go to convert")) {
-      navigate("/code-convertor");
-    } else if (lower.includes("go to debug")) {
-      navigate("/code-debug");
+    if (lower.startsWith("navigate::")) {
+      const path = lower.split("navigate::")[1];
+      navigate(path);
+      return;
     }
-
     const formattedReply = reply.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     const botMsg = { role: "bot", text: formattedReply };
     setMessages((prev) => [...prev, botMsg]);
