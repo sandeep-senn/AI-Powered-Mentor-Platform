@@ -68,7 +68,7 @@ app.post('/api/chat', async (req, res) => {
   for (const keyword of debugKeywords) {
     if (lower.includes(keyword)) {
       return res.status(200).json({
-      reply: `navigate::/code-debugger`
+      reply: `navigate::/code-debug`
       });
     }
   }
