@@ -5,11 +5,34 @@ import dotenv from "dotenv";
 dotenv.config();
 const port = process.env.PORT || 5000;
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://ai-powered-mentor-platform-bven.vercel.app"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (Postman, server-to-server)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+console.log("API KEY:", process.env.GEMINI_API_KEY);
 
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
@@ -45,7 +68,7 @@ app.post('/api/chat', async (req, res) => {
   for (const keyword of debugKeywords) {
     if (lower.includes(keyword)) {
       return res.status(200).json({
-      reply: `navigate::/code-convertor`
+      reply: `navigate::/code-debugger`
       });
     }
   }
@@ -116,7 +139,7 @@ app.post("/convert-code", async (req, res) => {
 });
 
 app.listen(port, () =>{
-    console.log('Started bro')
+    console.log('Started bro', port)
 })
 
 export default app;
