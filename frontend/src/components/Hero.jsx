@@ -97,7 +97,7 @@ const Hero = () => {
             transition={{ delay: 1, duration: 1 }}
             className="text-sm font-medium text-zinc-500 dark:text-zinc-500 mt-12"
           >
-            Trusted by 10K+ students • Powered by AI • Built for Developers
+            Trusted by 10K+ students  •  Built for Developers
           </motion.p>
         </motion.div>
       </div>

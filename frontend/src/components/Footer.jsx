@@ -22,7 +22,7 @@ const Footer = () => {
         hidden: { opacity: 0, y: 60 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
       }}
-      className="bg-gray-900 text-gray-300 py-16 px-6 md:px-24 mt-16 rounded-t-3xl"
+      className="bg-black text-gray-300 py-16 px-6 md:px-24 mt-16"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Logo and Tagline */}

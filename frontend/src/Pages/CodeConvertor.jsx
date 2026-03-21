@@ -1,128 +1,230 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {motion} from 'framer-motion'
-import '../components/Styles/animateBg.css'
+import { toast } from "react-toastify";
+import { Copy, Rocket, RotateCcw, ArrowRightLeft, Sparkles, Check, Clock, Trash2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 
-const languages = ["Python", "JavaScript", "Java", "C++", "C#", "TypeScript"];
-
-function CodeConverter() {
-  const [sourceCode, setSourceCode] = useState("");
+export default function CodeConvertor() {
+  const [code, setCode] = useState("");
+  const [targetLanguage, setTargetLanguage] = useState("Python");
   const [convertedCode, setConvertedCode] = useState("");
-  const [fromLang, setFromLang] = useState("Python");
-  const [toLang, setToLang] = useState("JavaScript");
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [history, setHistory] = useState([]);
+  const { user } = useAuth();
+
+  const languages = ["Python", "JavaScript", "C++", "Java", "Go", "Rust", "TypeScript", "Swift"];
+
+  useEffect(() => {
+    if (user) fetchHistory();
+  }, [user]);
+
+  const fetchHistory = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("converter_history")
+        .select("*")
+        .eq("user_email", user.email)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      setHistory(data || []);
+    } catch (err) {
+      console.error("History fetch error:", err);
+    }
+  };
 
   const handleConvert = async () => {
-    if (!sourceCode.trim()) return;
-
+    if (!code.trim()) return toast.error("Please enter some code");
     setLoading(true);
-    setConvertedCode("");
-
     try {
-      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/convert-code", {
-        sourceCode,
-        fromLang,
-        toLang,
+      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/convert-code", { 
+        sourceCode: code, 
+        fromLang: "Code", 
+        toLang: targetLanguage 
       });
-      setConvertedCode(res.data.convertedCode);
-    } catch (err) {
-      setConvertedCode("// ❌ Error converting code");
+      const result = res.data.convertedCode;
+      setConvertedCode(result);
+      
+      // Save to Supabase
+      if (user) {
+        await supabase.from("converter_history").insert([{
+          user_id: user.id,
+          user_email: user.email,
+          source_code: code,
+          target_lang: targetLanguage,
+          converted_code: result
+        }]);
+        fetchHistory(); // Refresh list
+      }
+      
+      toast.success("Conversion complete! ✨");
+    } catch (error) {
+      toast.error("Conversion failed");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    toast.success("Copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const deleteHistoryItem = async (id) => {
+    try {
+      const { error } = await supabase.from("converter_history").delete().eq("id", id);
+      if (error) throw error;
+      setHistory(history.filter(item => item.id !== id));
+      toast.info("Item removed from history");
+    } catch (err) {
+      toast.error("Delete failed");
+    }
+  };
+
   return (
-    <motion.div
-      className="animated-bg min-h-screen px-6 py-10 text-gray-800"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      <div className="max-w-5xl mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-5xl font-bold mb-8 text-center text-gray-900 tracking-tight"
-        >
-          AI Code Converter
-        </motion.h1>
+    <div className="min-h-screen pt-32 pb-24 px-4 bg-zinc-50 dark:bg-[#09090b] flex flex-col items-center transition-colors duration-500">
+      <div className="w-full max-w-6xl flex flex-col gap-10 animate-in fade-in duration-700">
+        
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+               <div className="p-3 bg-indigo-600 rounded-2xl text-white shadow-xl shadow-indigo-500/20">
+                  <ArrowRightLeft size={24} />
+               </div>
+               <h1 className="text-4xl font-extrabold tracking-tight">AI Code <span className="text-indigo-600">Converter</span></h1>
+            </div>
+            <p className="text-zinc-500 font-medium max-w-md">Instantly translate your snippets into any major programming language.</p>
+          </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="bg-white p-4 rounded-xl shadow-lg border border-gray-200"
-          >
-            <label className="block font-semibold text-lg mb-2">Source Code</label>
-            <textarea
-              className="w-full h-72 p-4 font-mono border border-gray-300 rounded-xl shadow-inner focus:ring-2 focus:ring-blue-400 resize-none bg-gray-50"
-              placeholder="Write your code here..."
-              value={sourceCode}
-              onChange={(e) => setSourceCode(e.target.value)}
-            />
-          </motion.div>
-
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="bg-zinc-900 p-4 rounded-xl shadow-xl"
-          >
-            <label className="block font-semibold text-lg text-white mb-2">Converted Code</label>
-            <pre className="w-full h-72 p-4 font-mono text-green-300 rounded-xl overflow-auto text-sm bg-transparent">
-              {loading ? "// ⏳ Converting..." : convertedCode || "// Output will appear here"}
-            </pre>
-          </motion.div>
+          <div className="flex flex-wrap items-center gap-4 bg-white dark:bg-zinc-900 p-2 rounded-2xl border border-zinc-200 dark:border-white/10 shadow-sm">
+             <div className="flex flex-col px-3">
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Target Language</span>
+                <select 
+                  value={targetLanguage} 
+                  onChange={(e) => setTargetLanguage(e.target.value)}
+                  className="bg-transparent text-sm font-bold outline-none cursor-pointer hover:text-indigo-600 transition-colors dark:text-white"
+                >
+                  {languages.map(lang => (
+                    <option key={lang} value={lang} className="dark:bg-zinc-900">{lang}</option>
+                  ))}
+                </select>
+             </div>
+             <div className="w-[1px] h-8 bg-zinc-200 dark:bg-white/10 mx-1 hidden sm:block" />
+             <button
+               onClick={handleConvert}
+               disabled={loading}
+               className="group px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+             >
+               {loading ? "Converting..." : <><Rocket size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> Convert</>}
+             </button>
+          </div>
         </div>
 
-        <motion.div
-          className="flex flex-wrap justify-center gap-4 my-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-        >
-          <div>
-            <label className="block text-sm mb-1 font-medium">From:</label>
-            <select
-              className="p-2 rounded-md border border-gray-300 shadow-sm"
-              value={fromLang}
-              onChange={(e) => setFromLang(e.target.value)}
-            >
-              {languages.map((lang) => (
-                <option key={lang}>{lang}</option>
-              ))}
-            </select>
+        {/* Main Editor Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[500px]">
+          <div className="flex flex-col bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-indigo-500/30">
+            <div className="px-8 py-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex justify-between items-center">
+               <div className="flex items-center gap-2 text-zinc-500">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                  <span className="text-xs font-bold uppercase tracking-widest">Source Code</span>
+               </div>
+               <button onClick={() => setCode("")} className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all rounded-lg">
+                  <RotateCcw size={16} />
+               </button>
+            </div>
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="// Paste your code here..."
+              className="flex-1 p-8 bg-transparent border-none outline-none resize-none font-mono text-sm dark:text-zinc-300 leading-relaxed"
+            />
           </div>
 
-          <div>
-            <label className="block text-sm mb-1 font-medium">To:</label>
-            <select
-              className="p-2 rounded-md border border-gray-300 shadow-sm"
-              value={toLang}
-              onChange={(e) => setToLang(e.target.value)}
-            >
-              {languages.map((lang) => (
-                <option key={lang}>{lang}</option>
-              ))}
-            </select>
+          <div className="flex flex-col bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-purple-500/30">
+            <div className="px-8 py-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex justify-between items-center">
+               <div className="flex items-center gap-2 text-zinc-500">
+                  <Sparkles size={16} className="text-purple-500" />
+                  <span className="text-xs font-bold uppercase tracking-widest">AI Result</span>
+               </div>
+               <button 
+                onClick={() => handleCopy(convertedCode)} 
+                disabled={!convertedCode}
+                className="p-2 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-zinc-400 hover:text-indigo-600 transition-all rounded-lg disabled:opacity-30"
+               >
+                  {copied ? <Check size={16} /> : <Copy size={16} />}
+               </button>
+            </div>
+            <div className="flex-1 p-8 overflow-y-auto font-mono text-sm">
+              {loading ? (
+                <div className="flex flex-col items-center justify-center h-full text-zinc-500 gap-4">
+                   <div className="w-12 h-12 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin" />
+                   <p className="font-mono text-sm">Translating logic...</p>
+                </div>
+              ) : (
+                <div className="prose prose-sm dark:prose-invert max-w-none prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-white/5">
+                  <ReactMarkdown>{convertedCode || "_Converted code will appear here..._"}</ReactMarkdown>
+                </div>
+              )}
+            </div>
           </div>
+        </div>
 
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-              backgroundColor: "#1d4ed8",
-              boxShadow: "0px 5px 20px rgba(37, 99, 235, 0.5)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleConvert}
-            disabled={loading}
-            className="bg-blue-600 text-white px-7 py-3 rounded-full font-semibold mt-6 transition-all shadow-md"
-          >
-            {loading ? "Converting..." : "✨ Convert Code"}
-          </motion.button>
-        </motion.div>
+        {/* History Section */}
+        {history.length > 0 && (
+          <div className="mt-8 space-y-6">
+             <div className="flex items-center gap-3 px-4">
+                <Clock size={20} className="text-zinc-400" />
+                <h2 className="text-xl font-bold">Conversion History</h2>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {history.map((item) => (
+                  <motion.div 
+                    key={item.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    className="group bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-white/5 shadow-sm hover:shadow-xl transition-all"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                       <div className="flex items-center gap-2">
+                          <span className="px-3 py-1 bg-indigo-600/10 text-indigo-600 text-[10px] font-bold rounded-full uppercase tracking-widest">
+                             {item.target_lang}
+                          </span>
+                          <span className="text-[10px] text-zinc-400 font-medium italic">
+                             {new Date(item.created_at).toLocaleDateString()}
+                          </span>
+                       </div>
+                       <div className="flex gap-2">
+                          <button onClick={() => setCode(item.source_code)} title="Load Source" className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-indigo-600 transition-colors">
+                             <RotateCcw size={14} />
+                          </button>
+                          <button onClick={() => deleteHistoryItem(item.id)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                             <Trash2 size={14} />
+                          </button>
+                       </div>
+                    </div>
+                    <div className="relative">
+                       <pre className="text-[10px] font-mono text-zinc-500 dark:text-zinc-500 bg-zinc-50 dark:bg-black/20 p-3 rounded-xl overflow-hidden h-24 line-clamp-4">
+                          {item.converted_code}
+                       </pre>
+                       <button 
+                        onClick={() => handleCopy(item.converted_code)}
+                        className="absolute bottom-2 right-2 p-2 bg-white dark:bg-zinc-800 rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-105"
+                       >
+                         <Copy size={12} />
+                       </button>
+                    </div>
+                  </motion.div>
+                ))}
+             </div>
+          </div>
+        )}
       </div>
-    </motion.div>
+    </div>
   );
 }
-
-export default CodeConverter;

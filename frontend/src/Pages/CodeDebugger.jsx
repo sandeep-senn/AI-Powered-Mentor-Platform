@@ -1,91 +1,185 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
-import "../components/Styles/animateBg.css";
+import { toast } from "react-toastify";
+import { Bug, Search, RotateCcw, Clock, Sparkles, Code2, Trash2, Copy, AlertCircle } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
 
 export default function CodeDebugger() {
   const [code, setCode] = useState("");
-  const [debugResult, setDebugResult] = useState("");
+  const [diagnostics, setDiagnostics] = useState("");
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) fetchHistory();
+  }, [user]);
+
+  const fetchHistory = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("debugger_history")
+        .select("*")
+        .eq("user_email", user.email)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      setHistory(data || []);
+    } catch (err) {
+      console.error("History fetch error:", err);
+    }
+  };
 
   const handleDebug = async () => {
+    if (!code.trim()) return toast.error("Please enter code to debug");
     setLoading(true);
-    setDebugResult("");
+    setDiagnostics("");
     try {
-      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/debug-code", {
-        code,
-      });
-      const rawReply = res.data.result;
-      const formattedResult = rawReply
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold
-        .replace(/\n/g, "<br/>"); // Line breaks
-      setDebugResult(formattedResult);
-
-      setDebugResult(formattedResult);
-    } catch (err) {
-      setDebugResult("❌ Debugging failed. Please try again.");
+      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/debug-code", { code });
+      const result = res.data.result;
+      setDiagnostics(result);
+      
+      // Save to Supabase
+      if (user) {
+        await supabase.from("debugger_history").insert([{
+          user_id: user.id,
+          user_email: user.email,
+          source_code: code,
+          diagnostics: result
+        }]);
+        fetchHistory();
+      }
+      
+      toast.success("Analysis complete! 🔍");
+    } catch (error) {
+      toast.error("Analysis failed");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const deleteHistoryItem = async (id) => {
+    try {
+      const { error } = await supabase.from("debugger_history").delete().eq("id", id);
+      if (error) throw error;
+      setHistory(history.filter(item => item.id !== id));
+      toast.info("Item removed from history");
+    } catch (err) {
+      toast.error("Delete failed");
+    }
   };
 
   return (
-    <motion.div
-      className="animated-bg min-h-screen px-6 py-10 text-gray-800"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      <motion.h1
-        className="text-4xl font-bold text-center mb-10 text-white drop-shadow-lg"
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        🛠️ AI Code Debugger
-      </motion.h1>
+    <div className="min-h-screen pt-32 pb-24 px-4 bg-zinc-50 dark:bg-[#09090b] flex flex-col items-center transition-colors duration-500">
+      <div className="w-full max-w-6xl flex flex-col gap-10 animate-in fade-in duration-700">
+        
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+               <div className="p-3 bg-red-600 rounded-2xl text-white shadow-xl shadow-red-500/20">
+                  <Bug size={24} />
+               </div>
+               <h1 className="text-4xl font-extrabold tracking-tight">AI Code <span className="text-red-600">Debugger</span></h1>
+            </div>
+            <p className="text-zinc-500 font-medium max-w-md">Find logic errors, syntax hurdles, and get optimization tips instantly.</p>
+          </div>
 
-      <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-        {/* Input Code */}
-        <motion.div
-          className="flex flex-col"
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          <label className="text-lg font-semibold mb-2">Paste Your Code</label>
-          <textarea
-            className="w-full h-72 p-4 font-mono rounded-xl border border-gray-300 shadow-md resize-none focus:ring-2 focus:ring-green-400"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Paste buggy code here..."
-          />
-
-          <motion.button
+          <button
             onClick={handleDebug}
             disabled={loading}
-            whileTap={{ scale: 0.95 }}
-            className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl shadow-md transition-all w-fit"
+            className="group px-10 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 flex items-center gap-3 transition-all active:scale-95 disabled:opacity-50"
           >
-            {loading ? "Debugging..." : "Debug Code"}
-          </motion.button>
-        </motion.div>
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Search size={20} className="group-hover:scale-110 transition-transform" />
+            )}
+            {loading ? "Analyzing..." : "Fix My Code"}
+          </button>
+        </div>
 
-        {/* Output */}
-        <motion.div
-          className="flex flex-col"
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          <label className="text-lg font-semibold mb-2">Debug Output</label>
-          <div
-            className="w-full h-72 p-4 font-mono bg-zinc-900 text-green-300 rounded-xl overflow-auto shadow-inner text-sm"
-            dangerouslySetInnerHTML={{
-              __html: loading
-                ? "Debugging in progress..."
-                : debugResult || "Output will appear here",
-            }}
-          ></div>
-        </motion.div>
+        {/* Main Interface Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[500px]">
+          <div className="flex flex-col bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-red-500/30">
+            <div className="px-8 py-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex justify-between items-center">
+               <div className="flex items-center gap-2 text-zinc-500">
+                  <Code2 size={16} className="text-red-500" />
+                  <span className="text-xs font-bold uppercase tracking-widest">Debug Lab</span>
+               </div>
+               <button onClick={() => setCode("")} className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all rounded-lg">
+                  <RotateCcw size={16} />
+               </button>
+            </div>
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="// Paste your buggy code here..."
+              className="flex-1 p-8 bg-transparent border-none outline-none resize-none font-mono text-sm dark:text-zinc-300 leading-relaxed"
+            />
+          </div>
+
+          <div className="flex flex-col bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-emerald-500/30 relative">
+            <div className="px-8 py-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex items-center gap-2 text-zinc-500">
+               <Sparkles size={16} className="text-emerald-500" />
+               <span className="text-xs font-bold uppercase tracking-widest">AI Diagnostics Report</span>
+            </div>
+            <div className="flex-1 p-8 overflow-y-auto font-sans text-sm">
+              {loading ? (
+                <div className="flex flex-col items-center justify-center h-full text-zinc-500 gap-4">
+                   <div className="w-16 h-16 rounded-full border-4 border-red-600 border-t-transparent animate-spin" />
+                   <p className="font-mono text-sm animate-pulse">Running diagnostics...</p>
+                </div>
+              ) : diagnostics ? (
+                <div className="prose prose-sm dark:prose-invert max-w-none prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-white/5">
+                   <ReactMarkdown>{diagnostics}</ReactMarkdown>
+                </div>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-zinc-400 text-center gap-4 opacity-40">
+                   <AlertCircle size={48} />
+                   <p className="italic">Hit "Fix My Code" to start analysis.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* History Section */}
+        {history.length > 0 && (
+          <div className="mt-8 space-y-6">
+             <div className="flex items-center gap-3 px-4 text-zinc-400">
+                <Clock size={20} />
+                <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Recent Diagnostics</h2>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {history.map((item) => (
+                  <div key={item.id} className="group bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-white/5 shadow-sm hover:shadow-xl transition-all">
+                    <div className="flex justify-between items-start mb-4">
+                       <span className="text-[10px] text-zinc-400 font-medium italic">
+                          {new Date(item.created_at).toLocaleDateString()}
+                       </span>
+                       <div className="flex gap-2">
+                          <button onClick={() => setCode(item.source_code)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-600 transition-colors">
+                             <RotateCcw size={14} />
+                          </button>
+                          <button onClick={() => deleteHistoryItem(item.id)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                             <Trash2 size={14} />
+                          </button>
+                       </div>
+                    </div>
+                    <div className="relative overflow-hidden group">
+                       <div className="text-[10px] font-mono text-zinc-500 dark:text-zinc-500 bg-zinc-50 dark:bg-black/20 p-3 rounded-xl h-24 line-clamp-4 leading-relaxed group-hover:bg-zinc-100 dark:group-hover:bg-black/40 transition-colors">
+                          {item.diagnostics}
+                       </div>
+                       <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white dark:from-zinc-900 group-hover:from-transparent transition-all" />
+                    </div>
+                  </div>
+                ))}
+             </div>
+          </div>
+        )}
       </div>
-    </motion.div>
+    </div>
   );
 }

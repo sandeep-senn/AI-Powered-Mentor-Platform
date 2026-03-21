@@ -41,7 +41,7 @@ const Roadmap = () => {
   }, []);
 
   return (
-    <section className="py-12 px-6 bg-gray-900 min-h-screen text-white">
+    <section className="py-12 px-6 bg-gray-900 min-h-screen text-white mt-12 md:mt-24">
       <h2 className="text-4xl font-bold mb-8 text-center">📍 Roadmap Section</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">

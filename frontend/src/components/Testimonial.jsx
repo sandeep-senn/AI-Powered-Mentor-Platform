@@ -86,7 +86,7 @@ const Testimonial = () => {
   };
 
   return (
-    <section ref={ref} className="py-24 px-6 md:px-12 bg-white dark:bg-zinc-950 transition-colors duration-300 min-h-[500px] flex items-center justify-center">
+    <section ref={ref} className="py-16 px-6 md:px-12 bg-white dark:bg-zinc-950 transition-colors duration-300 min-h-[500px] flex items-center justify-center">
       <div className="relative w-full max-w-7xl mx-auto bg-zinc-50 dark:bg-zinc-900/50 py-24 px-6 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden perspective-[1200px]">
         
         <AnimatePresence mode="wait">
@@ -172,7 +172,7 @@ const Testimonial = () => {
                 </AnimatePresence>
               </div>
 
-              <div className="flex items-center gap-6 mt-12 z-50">
+              <div className="flex items-center gap-6 mt-28 z-50">
                 <button 
                   onClick={() => paginate(-1)}
                   className="p-4 rounded-full bg-white dark:bg-zinc-800 shadow-md hover:shadow-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 transition hover:-translate-x-1"

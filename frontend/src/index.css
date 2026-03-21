@@ -111,7 +111,7 @@
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.488 0.243 264.376);
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent: oklch(0.269 0.04 0);
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
@@ -122,9 +122,25 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
     }
   html {
     @apply font-sans;
     }
+}
+
+.glass {
+  @apply bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl;
+}
+
+.premium-mesh {
+  background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+}
+
+.dark .premium-mesh {
+  background-image: radial-gradient(at 0% 0%, hsla(263,45%,10%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 0%, hsla(222,47%,11%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, hsla(280,45%,10%,1) 0, transparent 50%);
 }
