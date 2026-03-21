@@ -33,7 +33,7 @@ const Contact = () => {
             className="space-y-6 text-gray-700 text-lg"
           >
             <div className="flex items-center gap-3">
-              <Mail className="text-indigo-600" /> sen9098429387@gmail.com
+              <Mail className="text-indigo-600" /> the.sandeep.sen@gmail.com
             </div>
             <div className="flex items-center gap-3">
               <MapPin className="text-indigo-600" /> India
@@ -103,6 +103,9 @@ const Contact = () => {
 
             <button
               type="submit"
+              onClick =()=>{
+                toast.success("Details successfully sent to the admin"
+              }
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-300"
             >
             Send Message
