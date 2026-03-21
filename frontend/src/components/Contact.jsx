@@ -103,9 +103,9 @@ const Contact = () => {
 
             <button
               type="submit"
-              onClick =()=>{
-                toast.success("Details successfully sent to the admin"
-              }
+              onClick={() => {
+                toast.success("Details successfully sent to the admin");
+              }}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-300"
             >
             Send Message
