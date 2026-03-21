@@ -6,6 +6,7 @@ import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import ConfirmModal from "./ConfirmModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ import {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
 
@@ -131,16 +133,20 @@ const Navbar = () => {
                        <p className="text-sm font-bold truncate">{user.email}</p>
                     </div>
                     <DropdownMenuSeparator className="bg-white/10" />
-                    <DropdownMenuItem className="rounded-xl p-3 focus:bg-indigo-600 group cursor-pointer">
-                       <User size={16} className="mr-2 opacity-50 group-hover:opacity-100" /> Profile
+                    <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-indigo-600 group cursor-pointer">
+                       <Link to="/profile" className="flex items-center w-full">
+                          <User size={16} className="mr-2 opacity-50 group-hover:opacity-100" /> Profile
+                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="rounded-xl p-3 focus:bg-indigo-600 group cursor-pointer">
-                       <Settings size={16} className="mr-2 opacity-50 group-hover:opacity-100" /> Settings
+                    <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-indigo-600 group cursor-pointer">
+                       <Link to="/settings" className="flex items-center w-full">
+                          <Settings size={16} className="mr-2 opacity-50 group-hover:opacity-100" /> Settings
+                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-white/10" />
                     <DropdownMenuItem 
                       className="rounded-xl p-3 focus:bg-red-600 focus:text-white group text-red-500 cursor-pointer"
-                      onClick={handleLogout}
+                      onClick={() => setShowLogoutConfirm(true)}
                     >
                        <LogOut size={16} className="mr-2" /> Logout
                     </DropdownMenuItem>
@@ -236,6 +242,15 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <ConfirmModal 
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+        title="Sign Out?"
+        description="Are you sure you want to end your current session?"
+        confirmText="Sign Out"
+        variant="danger"
+      />
     </nav>
   );
 }

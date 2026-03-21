@@ -1,7 +1,8 @@
 import React from 'react';
-import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Laptop } from 'lucide-react';
 
 const Footer = () => {
   const controls = useAnimation();
@@ -58,14 +59,14 @@ const Footer = () => {
         <div>
           <h3 className="text-white text-lg font-semibold mb-3">Follow Us</h3>
           <div className="flex space-x-4 mt-2">
-            <a href="https://github.com/" target="_blank" rel="noreferrer">
+            <a href="https://github.com/sandeep-senn" target="_blank" rel="noreferrer">
               <FaGithub size={22} className="hover:text-white" />
             </a>
-            <a href="https://linkedin.com/" target="_blank" rel="noreferrer">
+            <a href="https://linkedin.com/in/sandeepsen77" target="_blank" rel="noreferrer">
               <FaLinkedin size={22} className="hover:text-white" />
             </a>
-            <a href="https://twitter.com/" target="_blank" rel="noreferrer">
-              <FaTwitter size={22} className="hover:text-white" />
+            <a href="https://sandeepsen.vercel.app" target="_blank" rel="noreferrer">
+              <Laptop size={22} className="hover:text-white" />
             </a>
           </div>
         </div>

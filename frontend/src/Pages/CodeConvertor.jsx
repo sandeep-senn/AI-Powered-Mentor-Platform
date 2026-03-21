@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function CodeConvertor() {
   const [code, setCode] = useState("");
@@ -14,6 +15,7 @@ export default function CodeConvertor() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [history, setHistory] = useState([]);
+  const [itemToDelete, setItemToDelete] = useState(null);
   const { user } = useAuth();
 
   const languages = ["Python", "JavaScript", "C++", "Java", "Go", "Rust", "TypeScript", "Swift"];
@@ -48,7 +50,6 @@ export default function CodeConvertor() {
       const result = res.data.convertedCode;
       setConvertedCode(result);
       
-      // Save to Supabase
       if (user) {
         await supabase.from("converter_history").insert([{
           user_id: user.id,
@@ -57,7 +58,7 @@ export default function CodeConvertor() {
           target_lang: targetLanguage,
           converted_code: result
         }]);
-        fetchHistory(); // Refresh list
+        fetchHistory();
       }
       
       toast.success("Conversion complete! ✨");
@@ -90,7 +91,6 @@ export default function CodeConvertor() {
     <div className="min-h-screen pt-32 pb-24 px-4 bg-zinc-50 dark:bg-[#09090b] flex flex-col items-center transition-colors duration-500">
       <div className="w-full max-w-6xl flex flex-col gap-10 animate-in fade-in duration-700">
         
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
@@ -126,7 +126,6 @@ export default function CodeConvertor() {
           </div>
         </div>
 
-        {/* Main Editor Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[500px]">
           <div className="flex flex-col bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-indigo-500/30">
             <div className="px-8 py-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex justify-between items-center">
@@ -175,7 +174,6 @@ export default function CodeConvertor() {
           </div>
         </div>
 
-        {/* History Section */}
         {history.length > 0 && (
           <div className="mt-8 space-y-6">
              <div className="flex items-center gap-3 px-4">
@@ -195,15 +193,12 @@ export default function CodeConvertor() {
                           <span className="px-3 py-1 bg-indigo-600/10 text-indigo-600 text-[10px] font-bold rounded-full uppercase tracking-widest">
                              {item.target_lang}
                           </span>
-                          <span className="text-[10px] text-zinc-400 font-medium italic">
-                             {new Date(item.created_at).toLocaleDateString()}
-                          </span>
                        </div>
                        <div className="flex gap-2">
                           <button onClick={() => setCode(item.source_code)} title="Load Source" className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-indigo-600 transition-colors">
                              <RotateCcw size={14} />
                           </button>
-                          <button onClick={() => deleteHistoryItem(item.id)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                          <button onClick={() => setItemToDelete(item.id)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
                              <Trash2 size={14} />
                           </button>
                        </div>
@@ -212,11 +207,8 @@ export default function CodeConvertor() {
                        <pre className="text-[10px] font-mono text-zinc-500 dark:text-zinc-500 bg-zinc-50 dark:bg-black/20 p-3 rounded-xl overflow-hidden h-24 line-clamp-4">
                           {item.converted_code}
                        </pre>
-                       <button 
-                        onClick={() => handleCopy(item.converted_code)}
-                        className="absolute bottom-2 right-2 p-2 bg-white dark:bg-zinc-800 rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-105"
-                       >
-                         <Copy size={12} />
+                       <button onClick={() => handleCopy(item.converted_code)} className="absolute bottom-2 right-2 p-2 bg-white dark:bg-zinc-800 rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-105">
+                          <Copy size={12} />
                        </button>
                     </div>
                   </motion.div>
@@ -225,6 +217,13 @@ export default function CodeConvertor() {
           </div>
         )}
       </div>
+      <ConfirmModal 
+        isOpen={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={() => deleteHistoryItem(itemToDelete)}
+        title="Delete Item?"
+        description="Are you sure you want to remove this conversion from your history?"
+      />
     </div>
   );
 }

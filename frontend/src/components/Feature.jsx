@@ -56,7 +56,7 @@ const Feature = () => {
   });
 
   return (
-    <section id="features" ref={ref} className="bg-white dark:bg-zinc-950 py-32 px-6 md:px-12 transition-colors duration-300">
+    <section id="features" ref={ref} className="min-h-screen bg-white dark:bg-zinc-950 py-32 px-6 md:px-12 transition-colors duration-300">
       <div className="max-w-6xl mx-auto">
         
         <div className="text-center mb-16 md:mb-24">

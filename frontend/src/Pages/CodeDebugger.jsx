@@ -5,12 +5,15 @@ import { Bug, Search, RotateCcw, Clock, Sparkles, Code2, Trash2, Copy, AlertCirc
 import ReactMarkdown from "react-markdown";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
+import ConfirmModal from "../components/ConfirmModal";
+import { motion } from "framer-motion";
 
 export default function CodeDebugger() {
   const [code, setCode] = useState("");
   const [diagnostics, setDiagnostics] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
+  const [itemToDelete, setItemToDelete] = useState(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -40,7 +43,6 @@ export default function CodeDebugger() {
       const result = res.data.result;
       setDiagnostics(result);
       
-      // Save to Supabase
       if (user) {
         await supabase.from("debugger_history").insert([{
           user_id: user.id,
@@ -74,7 +76,6 @@ export default function CodeDebugger() {
     <div className="min-h-screen pt-32 pb-24 px-4 bg-zinc-50 dark:bg-[#09090b] flex flex-col items-center transition-colors duration-500">
       <div className="w-full max-w-6xl flex flex-col gap-10 animate-in fade-in duration-700">
         
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
@@ -100,7 +101,6 @@ export default function CodeDebugger() {
           </button>
         </div>
 
-        {/* Main Interface Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[500px]">
           <div className="flex flex-col bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-red-500/30">
             <div className="px-8 py-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex justify-between items-center">
@@ -125,7 +125,7 @@ export default function CodeDebugger() {
                <Sparkles size={16} className="text-emerald-500" />
                <span className="text-xs font-bold uppercase tracking-widest">AI Diagnostics Report</span>
             </div>
-            <div className="flex-1 p-8 overflow-y-auto font-sans text-sm">
+            <div className="flex-1 p-8 overflow-y-auto font-sans text-sm text-zinc-300">
               {loading ? (
                 <div className="flex flex-col items-center justify-center h-full text-zinc-500 gap-4">
                    <div className="w-16 h-16 rounded-full border-4 border-red-600 border-t-transparent animate-spin" />
@@ -145,7 +145,6 @@ export default function CodeDebugger() {
           </div>
         </div>
 
-        {/* History Section */}
         {history.length > 0 && (
           <div className="mt-8 space-y-6">
              <div className="flex items-center gap-3 px-4 text-zinc-400">
@@ -154,7 +153,12 @@ export default function CodeDebugger() {
              </div>
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {history.map((item) => (
-                  <div key={item.id} className="group bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-white/5 shadow-sm hover:shadow-xl transition-all">
+                  <motion.div 
+                    key={item.id} 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    className="group bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-white/5 shadow-sm hover:shadow-xl transition-all"
+                  >
                     <div className="flex justify-between items-start mb-4">
                        <span className="text-[10px] text-zinc-400 font-medium italic">
                           {new Date(item.created_at).toLocaleDateString()}
@@ -163,7 +167,7 @@ export default function CodeDebugger() {
                           <button onClick={() => setCode(item.source_code)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-600 transition-colors">
                              <RotateCcw size={14} />
                           </button>
-                          <button onClick={() => deleteHistoryItem(item.id)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                          <button onClick={() => setItemToDelete(item.id)} className="p-2 rounded-lg bg-zinc-50 dark:bg-white/5 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
                              <Trash2 size={14} />
                           </button>
                        </div>
@@ -172,14 +176,20 @@ export default function CodeDebugger() {
                        <div className="text-[10px] font-mono text-zinc-500 dark:text-zinc-500 bg-zinc-50 dark:bg-black/20 p-3 rounded-xl h-24 line-clamp-4 leading-relaxed group-hover:bg-zinc-100 dark:group-hover:bg-black/40 transition-colors">
                           {item.diagnostics}
                        </div>
-                       <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white dark:from-zinc-900 group-hover:from-transparent transition-all" />
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
              </div>
           </div>
         )}
       </div>
+      <ConfirmModal 
+        isOpen={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={() => deleteHistoryItem(itemToDelete)}
+        title="Delete Diagnostic?"
+        description="Are you sure you want to remove this analysis from your history?"
+      />
     </div>
   );
 }

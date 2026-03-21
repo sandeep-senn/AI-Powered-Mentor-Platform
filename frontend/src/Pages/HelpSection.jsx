@@ -4,12 +4,14 @@ import ReactMarkdown from "react-markdown";
 import { toast } from "react-toastify";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function HelpSection() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const scrollRef = useRef(null);
   const { user } = useAuth();
 
@@ -155,7 +157,7 @@ export default function HelpSection() {
                </p>
             </div>
           </div>
-          <button onClick={clearChat} className="p-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all duration-300">
+          <button onClick={() => setShowClearConfirm(true)} className="p-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all duration-300">
             <Trash2 size={18} />
           </button>
         </div>
@@ -222,6 +224,13 @@ export default function HelpSection() {
            </p>
         </div>
       </div>
+      <ConfirmModal 
+        isOpen={showClearConfirm}
+        onClose={() => setShowClearConfirm(false)}
+        onConfirm={clearChat}
+        title="Clear Conversation?"
+        description="This will permanently delete your entire chat history with the AI mentor."
+      />
     </div>
   );
 }

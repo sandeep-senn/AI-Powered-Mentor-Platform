@@ -7,7 +7,7 @@ import Contact from '../components/Contact';
 
 const Home = () => {
   return (
-    <div>
+    <div className="min-h-screen bg-white dark:bg-[#09090b] transition-colors duration-500">
       <Hero />
       <Feature />
       <Testimonial />
