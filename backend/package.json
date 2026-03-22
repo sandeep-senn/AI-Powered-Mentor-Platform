@@ -4,11 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-<<<<<<< HEAD
-    "dev": "nodemon server.js"
-=======
     "dev": "nodemon app.js"
->>>>>>> a9dcee09bfd670f46c42259f75650e37a78500a6
   },
   "keywords": [],
   "author": "",

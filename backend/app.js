@@ -62,12 +62,12 @@ app.post('/api/chat', async (req, res) => {
     }
   }
   
-  // 🐞 3. Redirect to /code-debug if debugging needed
+  // 🐞 3. Redirect to /code-debugger if debugging needed
   const debugKeywords = ["debug", "error", "fix", "issue", "problem"];
   for (const keyword of debugKeywords) {
     if (lower.includes(keyword)) {
       return res.status(200).json({
-      reply: `navigate::/code-debug`
+      reply: `navigate::/code-debugger`
       });
     }
   }
@@ -130,7 +130,7 @@ app.post("/convert-code", async (req, res) => {
     });
 
     const response = await result.response;
-    const convertedCode = response.text();
+    const convertedCode = await response.text();
     res.json({ convertedCode });
   } catch (err) {
     res.status(500).json({ error: "Conversion failed." }); 

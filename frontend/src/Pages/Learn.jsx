@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const topics = [
   {
@@ -87,11 +87,8 @@ const Learn = () => {
           <h3 className="text-2xl font-extrabold text-blue-600 mb-4">{section.category}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {section.subtopics.map((topic, subIndex) => (
-  <Link
-    key={topic.title}
-    to={`/learn/${section.category.toLowerCase().replace(/\s+/g, '-')}/${topic.title.toLowerCase().replace(/\s+/g, '-')}`}
-  >
     <div
+      key={topic.title}
       className={`p-5 rounded-xl border shadow-sm cursor-pointer hover:shadow-md transition ${
         topic.completed ? 'bg-green-100 border-green-400' : 'bg-gray-50'
       }`}
@@ -99,10 +96,9 @@ const Learn = () => {
       <h4 className="text-lg font-semibold text-gray-800 mb-1">{topic.title}</h4>
       <p className="text-sm text-gray-600">{topic.desc}</p>
       <p className="text-xs mt-2 text-gray-500">
-        {topic.completed ? '✅ Completed' : '📖 Click to view'}
+        {topic.completed ? '✅ Completed' : '📖 Coming Soon'}
       </p>
     </div>
-  </Link>
 ))}
           </div>
         </div>
