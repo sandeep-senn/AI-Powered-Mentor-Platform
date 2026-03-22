@@ -1,5 +1,4 @@
 import React from 'react';
-import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -10,8 +9,6 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-[100dvh] flex flex-col overflow-hidden bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
-      <Navbar />
-      
       {/* Background Grid & Glows */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px]"></div>
