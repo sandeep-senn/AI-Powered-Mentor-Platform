@@ -10,7 +10,7 @@ const features = [
     title: 'AI Code Debugging',
     description: 'Get instant AI-generated solutions and explanations for your buggy code.',
     icon: <Code size={32} className="text-indigo-600 dark:text-indigo-400" />,
-    route: '/code-debug',
+    route: '/code-debugger',
     colSpan: 'md:col-span-2',
     bgClass: 'bg-indigo-50/50 dark:bg-indigo-950/20 hover:bg-indigo-50 dark:hover:bg-indigo-900/40',
   },

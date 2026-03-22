@@ -101,7 +101,7 @@ PORT=5000
 
 If user says "convert this code" → AI routes to /code-convertor
 
-If "debug" is found → AI routes to /code-debug
+If "debug" is found → AI routes to /code-debugger
 
 If "give me roadmap" → routes to /roadmap
 
