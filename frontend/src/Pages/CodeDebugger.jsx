@@ -98,9 +98,9 @@ export default function CodeDebugger() {
                <div className="p-3 bg-red-600 rounded-2xl text-white shadow-xl shadow-red-500/20">
                   <Bug size={24} />
                </div>
-               <h1 className="text-4xl font-extrabold tracking-tight">AI Code <span className="text-red-600">Debugger</span></h1>
+               <h1 className="text-4xl font-extrabold tracking-tight">AI <span className="text-red-600">Bug Analyzer</span></h1>
             </div>
-            <p className="text-zinc-500 font-medium max-w-md">Find logic errors, syntax hurdles, and get optimization tips instantly.</p>
+            <p className="text-zinc-500 font-medium max-w-md">Surface errors faster, understand root causes, and get clearer repair suggestions.</p>
           </div>
 
           <button
@@ -113,7 +113,7 @@ export default function CodeDebugger() {
             ) : (
               <Search size={20} className="group-hover:scale-110 transition-transform" />
             )}
-            {loading ? "Analyzing..." : "Fix My Code"}
+            {loading ? "Analyzing..." : "Analyze Code"}
           </button>
         </div>
 
@@ -122,7 +122,7 @@ export default function CodeDebugger() {
             <div className="px-8 py-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex justify-between items-center">
                <div className="flex items-center gap-2 text-zinc-500">
                   <Code2 size={16} className="text-red-500" />
-                  <span className="text-xs font-bold uppercase tracking-widest">Debug Lab</span>
+                  <span className="text-xs font-bold uppercase tracking-widest">Analysis Lab</span>
                </div>
                <button onClick={() => setCode("")} className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all rounded-lg">
                   <RotateCcw size={16} />
@@ -154,7 +154,7 @@ export default function CodeDebugger() {
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-zinc-400 text-center gap-4 opacity-40">
                    <AlertCircle size={48} />
-                   <p className="italic">Hit "Fix My Code" to start analysis.</p>
+                   <p className="italic">Hit "Analyze Code" to start analysis.</p>
                 </div>
               )}
             </div>

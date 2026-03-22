@@ -75,7 +75,7 @@ const Hero = () => {
               onClick={() => navigate('/learn')}
               className="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-full px-8 h-12 text-base font-semibold shadow-lg transition-all hover:scale-105 active:scale-95"
             >
-              Start Learning <ArrowRight className="w-4 h-4 ml-2" />
+              Explore Roadmaps <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Button 
               onClick={() => navigate('/features')}

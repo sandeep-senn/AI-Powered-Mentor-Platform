@@ -43,7 +43,7 @@ export default function Upgrade() {
       price: '$0',
       period: '/forever',
       limit: '3 AI Requests / day',
-      features: ["AI Code Conversions", "AI Code Debugging", "Basic Roadmaps"],
+      features: ["Code Translation", "Bug Analysis", "Core Skill Roadmaps"],
       buttonText: 'Current Plan',
       isCurrent: planName === 'free',
       color: 'zinc'
@@ -54,7 +54,7 @@ export default function Upgrade() {
       price: '$4.99',
       period: '/month',
       limit: '10 AI Requests / day',
-      features: ["Faster AI Responses", "Priority Support", "Silver Badge", "Advanced Roadmaps"],
+      features: ["Faster AI Responses", "Priority Support", "Silver Badge", "Advanced Skill Roadmaps"],
       buttonText: 'Upgrade to Silver',
       isCurrent: planName === 'silver',
       color: 'indigo'

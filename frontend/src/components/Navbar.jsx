@@ -47,10 +47,10 @@ const Navbar = () => {
   };
 
   const services = [
-    { name: "Learn", path: "/learn" },
-    { name: "Convert", path: "/code-convertor" },
-    { name: "Chat", path: "/help" },
-    { name: "Debug", path: "/code-debugger" },
+    { name: "Skill Roadmaps", path: "/learn" },
+    { name: "Code Translator", path: "/code-convertor" },
+    { name: "Mentor Chat", path: "/help" },
+    { name: "Bug Analyzer", path: "/code-debugger" },
   ];
 
   const navLinks = [

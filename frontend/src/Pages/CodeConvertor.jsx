@@ -114,9 +114,9 @@ export default function CodeConvertor() {
                <div className="p-3 bg-indigo-600 rounded-2xl text-white shadow-xl shadow-indigo-500/20">
                   <ArrowRightLeft size={24} />
                </div>
-               <h1 className="text-4xl font-extrabold tracking-tight">AI Code <span className="text-indigo-600">Converter</span></h1>
+               <h1 className="text-4xl font-extrabold tracking-tight">AI Code <span className="text-indigo-600">Translator</span></h1>
             </div>
-            <p className="text-zinc-500 font-medium max-w-md">Instantly translate your snippets into any major programming language.</p>
+            <p className="text-zinc-500 font-medium max-w-md">Translate source code across major languages while preserving intent and structure.</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-4 bg-white dark:bg-zinc-900 p-2 rounded-2xl border border-zinc-200 dark:border-white/10 shadow-sm">
@@ -138,7 +138,7 @@ export default function CodeConvertor() {
                disabled={loading}
                className="group px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50"
              >
-               {loading ? "Converting..." : <><Rocket size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> Convert</>}
+               {loading ? "Translating..." : <><Rocket size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> Translate Code</>}
              </button>
           </div>
         </div>
