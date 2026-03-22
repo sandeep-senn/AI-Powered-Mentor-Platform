@@ -19,6 +19,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const location = useLocation();
   const { user, signOut, isPremium } = useAuth();
   const [planName, setPlanName] = useState('free');
@@ -28,6 +29,12 @@ const Navbar = () => {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleWindowClick = () => setServicesOpen(false);
+    window.addEventListener("click", handleWindowClick);
+    return () => window.removeEventListener("click", handleWindowClick);
   }, []);
 
   const handleLogout = async () => {
@@ -92,27 +99,37 @@ const Navbar = () => {
             ))}
 
             {/* Services Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 outline-none ${
-                  services.some(s => s.path === location.pathname)
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={() => setServicesOpen((open) => !open)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 outline-none ${
+                  services.some((s) => s.path === location.pathname)
                     ? "text-indigo-600 dark:text-indigo-400"
                     : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-indigo-600 dark:hover:text-white"
-                }`}>
-                  Services
-                  <ChevronDown size={14} className="opacity-50" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 glass p-2 rounded-2xl border-white/10 mt-2">
-                {services.map((service) => (
-                  <DropdownMenuItem key={service.name} asChild className="p-0">
-                    <Link to={service.path} className="flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors focus:bg-indigo-600 focus:text-white hover:bg-indigo-600 hover:text-white outline-none">
+                }`}
+              >
+                Services
+                <ChevronDown
+                  size={14}
+                  className={`opacity-50 transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {servicesOpen && (
+                <div className="absolute right-0 mt-2 w-48 glass p-2 rounded-2xl border border-white/10 shadow-xl">
+                  {services.map((service) => (
+                    <Link
+                      key={service.name}
+                      to={service.path}
+                      onClick={() => setServicesOpen(false)}
+                      className="flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-indigo-600 hover:text-white"
+                    >
                       {service.name}
                     </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Actions */}
