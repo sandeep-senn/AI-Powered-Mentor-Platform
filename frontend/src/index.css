@@ -126,12 +126,14 @@
   #root {
     min-height: 100%;
   }
+  html {
+    scrollbar-gutter: stable;
+    @apply font-sans;
+  }
   body {
     margin: 0;
+    overflow-x: hidden;
     @apply bg-background text-foreground transition-colors duration-300;
-  }
-  html {
-    @apply font-sans;
   }
 }
 

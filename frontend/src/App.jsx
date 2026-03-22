@@ -29,7 +29,7 @@ function AppContent() {
   const hideNavbar = ["/login", "/signup"].includes(location.pathname);
 
   return (
-    <div className="relative min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 transition-colors duration-300 overflow-x-hidden">
+    <div className="relative min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
       {!hideNavbar && <Navbar />}
       <CookieBanner />
       <main>
