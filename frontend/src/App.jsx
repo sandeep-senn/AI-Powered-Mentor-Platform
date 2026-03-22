@@ -15,6 +15,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Feature from "./components/Feature";
 import Roadmap from "./components/Roadmap/Roadmap";
+import Upgrade from "./Pages/Upgrade";
+import CookieBanner from "./components/CookieBanner";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -29,6 +31,7 @@ function AppContent() {
   return (
     <div className="relative min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 transition-colors duration-300 overflow-x-hidden">
       {!hideNavbar && <Navbar />}
+      <CookieBanner />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -41,6 +44,7 @@ function AppContent() {
           <Route path="/code-convertor" element={<ProtectedRoute><CodeConvertor /></ProtectedRoute>} />
           <Route path="/code-debugger" element={<ProtectedRoute><CodeDebugger /></ProtectedRoute>} />
           <Route path="/help" element={<ProtectedRoute><HelpSection /></ProtectedRoute>} />
+          <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
           

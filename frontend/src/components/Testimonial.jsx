@@ -102,11 +102,11 @@ const Testimonial = () => {
               <span className="inline-flex mb-6 text-xs sm:text-sm font-bold tracking-wider uppercase bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-4 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800 shadow-sm mx-auto">
                 Testimonials
               </span>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-zinc-900 dark:text-white mb-6 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">
                 Trusted by leaders <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-gray-400 dark:from-gray-400 dark:to-gray-600 font-semibold">from top tech companies</span>
+                <span className="text-zinc-500 dark:text-zinc-400 font-semibold">from top tech companies</span>
               </h2>
-              <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
                 Discover how thousands of developers rely on our AI Mentor to accelerate their learning and streamline their coding workflow 24/7.
               </p>
               <motion.button
@@ -153,7 +153,7 @@ const Testimonial = () => {
                   >
                     <div className="bg-white dark:bg-zinc-900 rounded-[2rem] p-8 md:p-12 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col items-center text-center">
                        <Quote className="w-12 h-12 text-indigo-500/20 dark:text-indigo-400/20 mb-6" />
-                       <p className="text-xl md:text-2xl text-zinc-800 dark:text-zinc-200 font-medium leading-relaxed mb-8">
+                       <p className="text-lg md:text-xl text-zinc-800 dark:text-zinc-200 font-medium leading-relaxed mb-8">
                          "{testimonialsData[currentIndex].text}"
                        </p>
                        <img 

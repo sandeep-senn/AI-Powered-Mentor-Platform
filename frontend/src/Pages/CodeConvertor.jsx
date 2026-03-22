@@ -42,11 +42,24 @@ export default function CodeConvertor() {
     if (!code.trim()) return toast.error("Please enter some code");
     setLoading(true);
     try {
-      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/convert-code", { 
-        sourceCode: code, 
-        fromLang: "Code", 
-        toLang: targetLanguage 
-      });
+      // Get the session token for the Authorization header
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await axios.post(
+        "https://ai-powered-mentor-platform.onrender.com/convert-code", 
+        { 
+          sourceCode: code, 
+          fromLang: "Code", 
+          toLang: targetLanguage 
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
       const result = res.data.convertedCode;
       setConvertedCode(result);
       
@@ -63,7 +76,11 @@ export default function CodeConvertor() {
       
       toast.success("Conversion complete! ✨");
     } catch (error) {
-      toast.error("Conversion failed");
+      if (error.response?.status === 429) {
+        toast.warning(error.response.data.message || "Daily limit reached. Upgrade to Premium.");
+      } else {
+        toast.error("Conversion failed");
+      }
     } finally {
       setLoading(false);
     }

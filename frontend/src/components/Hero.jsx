@@ -49,7 +49,7 @@ const Hero = () => {
               visible: { opacity: 1, y: 0 }
             }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-5xl md:text-7xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-6 leading-[1.1]"
+            className="text-4xl md:text-6xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mb-6 leading-tight"
           >
             Master Code Faster with an <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">AI Mentor</span>
           </motion.h1>
@@ -60,7 +60,7 @@ const Hero = () => {
               visible: { opacity: 1, y: 0 }
             }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed"
+            className="text-base md:text-lg text-zinc-500 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed"
           >
             Struggling with bugs? Learn, debug, and translate code instantly. 
             Your personal engineering mentor available 24/7.
@@ -76,14 +76,14 @@ const Hero = () => {
           >
             <Button 
               onClick={() => navigate('/learn')}
-              className="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-full px-8 h-14 text-lg font-bold shadow-xl transition-all hover:scale-105 active:scale-95"
+              className="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-full px-8 h-12 text-base font-semibold shadow-lg transition-all hover:scale-105 active:scale-95"
             >
-              Start Learning <ArrowRight className="w-5 h-5 ml-2" />
+              Start Learning <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Button 
               onClick={() => navigate('/features')}
               variant="outline"
-              className="w-full sm:w-auto bg-white/50 hover:bg-white dark:bg-zinc-900/50 dark:hover:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-full px-8 h-14 text-lg font-bold backdrop-blur-sm transition-all hover:scale-105 active:scale-95"
+              className="w-full sm:w-auto bg-white/50 hover:bg-white dark:bg-zinc-900/50 dark:hover:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full px-8 h-12 text-base font-semibold backdrop-blur-sm transition-all hover:scale-105 active:scale-95"
             >
               Explore Features
             </Button>

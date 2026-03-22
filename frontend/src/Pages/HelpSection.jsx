@@ -100,14 +100,29 @@ export default function HelpSection() {
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
       const res = await fetch("https://ai-powered-mentor-platform.onrender.com/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ message: msgText }),
       });
+
       const data = await res.json();
+
+      if (res.status === 429) {
+        toast.warning(data.message || "Daily limit reached. Upgrade to Premium.");
+        setIsTyping(false);
+        return;
+      }
+
+      if (!res.ok) throw new Error(data.error || "Failed to connect");
+
       const botMsg = { role: "bot", text: data.reply };
-      
       setMessages(prev => [...prev, botMsg]);
 
       if (user) {

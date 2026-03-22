@@ -39,7 +39,19 @@ export default function CodeDebugger() {
     setLoading(true);
     setDiagnostics("");
     try {
-      const res = await axios.post("https://ai-powered-mentor-platform.onrender.com/debug-code", { code });
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await axios.post(
+        "https://ai-powered-mentor-platform.onrender.com/debug-code", 
+        { code },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
       const result = res.data.result;
       setDiagnostics(result);
       
@@ -55,7 +67,11 @@ export default function CodeDebugger() {
       
       toast.success("Analysis complete! 🔍");
     } catch (error) {
-      toast.error("Analysis failed");
+      if (error.response?.status === 429) {
+        toast.warning(error.response.data.message || "Daily limit reached. Upgrade to Premium.");
+      } else {
+        toast.error("Analysis failed");
+      }
     } finally {
       setLoading(false);
     }

@@ -28,7 +28,7 @@ const Footer = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Logo and Tagline */}
         <div>
-          <h2 className="text-white text-2xl font-bold mb-2">MentorAI</h2>
+          <h2 className="text-zinc-100 text-xl font-bold mb-2">MentorAI</h2>
           <p className="text-gray-400">
             Your AI-powered mentor to master programming, DSA, cloud, and more.
           </p>
@@ -36,7 +36,7 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div>
-          <h3 className="text-white text-lg font-semibold mb-3">Quick Links</h3>
+          <h3 className="text-white text-xs font-bold mb-4 uppercase tracking-widest opacity-50">Quick Links</h3>
           <ul className="space-y-2">
             <li><a href="#features" className="hover:text-white">Features</a></li>
             <li><a href="#testimonials" className="hover:text-white">Testimonials</a></li>
@@ -46,7 +46,7 @@ const Footer = () => {
 
         {/* Courses */}
         <div>
-          <h3 className="text-white text-lg font-semibold mb-3">Courses</h3>
+          <h3 className="text-white text-xs font-bold mb-4 uppercase tracking-widest opacity-50">Courses</h3>
           <ul className="space-y-2">
             <li>Data Structures</li>
             <li>Cloud Computing</li>
@@ -57,7 +57,7 @@ const Footer = () => {
 
         {/* Socials */}
         <div>
-          <h3 className="text-white text-lg font-semibold mb-3">Follow Us</h3>
+          <h3 className="text-white text-xs font-bold mb-4 uppercase tracking-widest opacity-50">Follow Us</h3>
           <div className="flex space-x-4 mt-2">
             <a href="https://github.com/sandeep-senn" target="_blank" rel="noreferrer">
               <FaGithub size={22} className="hover:text-white" />

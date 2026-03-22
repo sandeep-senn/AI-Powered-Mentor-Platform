@@ -64,7 +64,7 @@ const Feature = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-extrabold text-zinc-900 dark:text-white tracking-tight mb-6"
+            className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight mb-6"
           >
             Everything You Need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">Level Up</span>
           </motion.h2>
@@ -72,7 +72,7 @@ const Feature = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto"
+            className="text-base md:text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed"
           >
             Whether you're a beginner or preparing for placements, your AI mentor provides all the industry-grade tools you need.
           </motion.p>
@@ -97,10 +97,10 @@ const Feature = () => {
                 <div className="mb-6 p-4 bg-white dark:bg-zinc-900 rounded-2xl w-fit shadow-sm border border-zinc-100 dark:border-zinc-800">
                   {feature.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3 tracking-tight">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">
                   {feature.title}
                 </h3>
-                <p className="text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed max-w-sm">
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed max-w-sm">
                   {feature.description}
                 </p>
               </div>

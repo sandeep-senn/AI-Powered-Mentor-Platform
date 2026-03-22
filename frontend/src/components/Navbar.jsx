@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Rocket, LogOut, User, Settings, ChevronDown } from "lucide-react";
+import { Menu, X, Rocket, LogOut, User, Settings, ChevronDown, Sparkles } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
 import { useAuth } from "../context/AuthContext";
@@ -20,8 +20,8 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
-  const { user, signOut } = useAuth();
-
+  const { user, signOut, isPremium } = useAuth();
+  const [planName, setPlanName] = useState('free');
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -129,10 +129,29 @@ const Navbar = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56 glass p-2 rounded-2xl border-white/10 mt-2">
                     <div className="px-3 py-2">
-                       <p className="text-xs font-medium text-zinc-500 uppercase tracking-tighter">My Account</p>
+                       <div className="flex items-center justify-between mb-1">
+                         <p className="text-xs font-medium text-zinc-500 uppercase tracking-tighter">My Account</p>
+                         {planName === 'silver' && (
+                           <span className="px-2 py-0.5 bg-gradient-to-r from-slate-400 to-slate-600 text-[8px] font-black text-white rounded-full uppercase tracking-widest shadow-lg shadow-slate-500/20">
+                             SILVER
+                           </span>
+                         )}
+                         {planName === 'gold' && (
+                           <span className="px-2 py-0.5 bg-gradient-to-r from-amber-400 to-orange-500 text-[8px] font-black text-white rounded-full uppercase tracking-widest shadow-lg shadow-orange-500/20">
+                             GOLD
+                           </span>
+                         )}
+                       </div>
                        <p className="text-sm font-bold truncate">{user.email}</p>
                     </div>
                     <DropdownMenuSeparator className="bg-white/10" />
+                    {planName !== 'gold' && (
+                      <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-amber-500 focus:text-white group cursor-pointer">
+                        <Link to="/upgrade" className="flex items-center w-full">
+                          <Sparkles size={16} className="mr-2 text-amber-500 group-hover:text-white transition-colors" /> {planName === 'free' ? 'Upgrade to Pro' : 'Upgrade your Plan'}
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-indigo-600 group cursor-pointer">
                        <Link to="/profile" className="flex items-center w-full">
                           <User size={16} className="mr-2 opacity-50 group-hover:opacity-100" /> Profile

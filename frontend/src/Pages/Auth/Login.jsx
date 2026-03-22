@@ -47,7 +47,7 @@ export default function Login() {
               <Sparkles size={12} />
               AI-Powered Mentorship
             </div>
-            <h2 className="text-4xl font-black tracking-tight mb-4 leading-[1.1]">
+            <h2 className="text-3xl font-bold tracking-tight mb-4 leading-tight">
               Level Up Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
                 Coding Skills
@@ -112,10 +112,10 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-2xl shadow-indigo-600/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
+              className="w-full h-12 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-xl shadow-indigo-600/10 active:scale-[0.99] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4 text-[10px] uppercase tracking-widest"
             >
-              {loading ? <Loader2 className="animate-spin" size={20} /> : <LogIn size={20} />}
-              <span className="tracking-wide uppercase font-black text-xs">{loading ? "Signing in..." : "Enter Platform"}</span>
+              {loading ? <Loader2 className="animate-spin" size={18} /> : <LogIn size={18} />}
+              <span>{loading ? "Signing in..." : "Enter Platform"}</span>
             </button>
           </form>
 

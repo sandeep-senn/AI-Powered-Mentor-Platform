@@ -47,7 +47,7 @@ export default function Signup() {
               <Sparkles size={12} />
               Future of Learning
             </div>
-            <h2 className="text-4xl font-black tracking-tight mb-4 leading-[1.1]">
+            <h2 className="text-3xl font-bold tracking-tight mb-4 leading-tight">
               Start Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">
                 AI Journey
@@ -120,10 +120,10 @@ export default function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-2xl shadow-purple-600/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
+              className="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-xl shadow-purple-600/10 active:scale-[0.99] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4 text-[10px] uppercase tracking-widest"
             >
-              {loading ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
-              <span className="tracking-wide uppercase font-black text-xs">{loading ? "Initializing..." : "Create Identity"}</span>
+              {loading ? <Loader2 className="animate-spin" size={18} /> : <Sparkles size={18} />}
+              <span>{loading ? "Initializing..." : "Create Identity"}</span>
             </button>
           </form>
 

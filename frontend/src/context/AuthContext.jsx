@@ -5,21 +5,59 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [planName, setPlanName] = useState('free');
   const [loading, setLoading] = useState(true);
+  const isPremium = planName === 'gold';
+  
+  const refreshProfile = async (userId) => {
+    if (!userId) {
+      setPlanName('free');
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('plan_name')
+        .eq('id', userId)
+        .maybeSingle();
+      
+      if (error) throw error;
+
+      if (data && data.plan_name) {
+        setPlanName(data.plan_name);
+      } else {
+        // Safe Upsert: Create profile if missing (helps existing users)
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData?.user) {
+          await supabase.from('profiles').upsert(
+            { id: userId, email: userData.user.email, plan_name: 'free' },
+            { onConflict: 'id' }
+          );
+        }
+        setPlanName('free');
+      }
+    } catch (err) {
+      console.error("Profile sync error:", err);
+    }
+  };
 
   useEffect(() => {
-    // Check active sessions and sets the user
     const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
+      if (session?.user) refreshProfile(session.user.id);
       setLoading(false);
     };
 
     getSession();
 
-    // Listen for changes on auth state (logged in, signed out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        refreshProfile(session.user.id);
+      } else {
+        setPlanName('free');
+      }
       setLoading(false);
     });
 
@@ -35,6 +73,8 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     user,
+    isPremium,
+    refreshProfile: () => refreshProfile(user?.id),
     loading,
   };
 
