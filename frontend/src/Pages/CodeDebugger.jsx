@@ -42,60 +42,40 @@ export default function CodeDebugger() {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
-      const res = await fetch(
-        "https://ai-powered-mentor-platform.onrender.com/debug-code",
+      const res = await axios.post(
+        "https://ai-powered-mentor-platform.onrender.com/debug-code", 
+        { code },
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ code }),
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
-
-      if (!res.ok) {
-        const data = await res.json();
-        if (res.status === 429) toast.warning(data.message || "Daily limit reached.");
-        else toast.error("Analysis failed");
-        return;
+      
+      const result = res.data.result;
+      setDiagnostics(result);
+      
+      if (user) {
+        await supabase.from("debugger_history").insert([{
+          user_id: user.id,
+          user_email: user.email,
+          source_code: code,
+          diagnostics: result
+        }]);
+        fetchHistory();
       }
-
-      setLoading(false);
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const raw = decoder.decode(value, { stream: true });
-        const lines = raw.split("\n").filter(l => l.startsWith("data: "));
-        for (const line of lines) {
-          try {
-            const json = JSON.parse(line.replace("data: ", ""));
-            if (json.error) { toast.error(json.error); break; }
-            if (json.chunk) {
-              fullText += json.chunk;
-              setDiagnostics(fullText);
-            }
-            if (json.done && user) {
-              await supabase.from("debugger_history").insert([{
-                user_id: user.id,
-                user_email: user.email,
-                source_code: code,
-                diagnostics: fullText
-              }]);
-              fetchHistory();
-              toast.success("Analysis complete! 🔍");
-            }
-          } catch { /* skip malformed */ }
-        }
-      }
+      
+      toast.success("Analysis complete! 🔍");
     } catch (error) {
-      toast.error("Analysis failed");
+      if (error.response?.status === 429) {
+        toast.warning(error.response.data.message || "Daily limit reached. Upgrade to Premium.");
+      } else {
+        toast.error("Analysis failed");
+      }
     } finally {
       setLoading(false);
     }
   };
-
 
   const deleteHistoryItem = async (id) => {
     try {

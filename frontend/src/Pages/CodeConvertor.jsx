@@ -41,61 +41,46 @@ export default function CodeConvertor() {
   const handleConvert = async () => {
     if (!code.trim()) return toast.error("Please enter some code");
     setLoading(true);
-    setConvertedCode("");
     try {
+      // Get the session token for the Authorization header
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
-      const res = await fetch(
-        "https://ai-powered-mentor-platform.onrender.com/convert-code",
+      const res = await axios.post(
+        "https://ai-powered-mentor-platform.onrender.com/convert-code", 
+        { 
+          sourceCode: code, 
+          fromLang: "Code", 
+          toLang: targetLanguage 
+        },
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ sourceCode: code, fromLang: "Code", toLang: targetLanguage }),
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
-
-      if (!res.ok) {
-        const data = await res.json();
-        if (res.status === 429) toast.warning(data.message || "Daily limit reached.");
-        else toast.error("Conversion failed");
-        return;
+      
+      const result = res.data.convertedCode;
+      setConvertedCode(result);
+      
+      if (user) {
+        await supabase.from("converter_history").insert([{
+          user_id: user.id,
+          user_email: user.email,
+          source_code: code,
+          target_lang: targetLanguage,
+          converted_code: result
+        }]);
+        fetchHistory();
       }
-
-      setLoading(false);
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const raw = decoder.decode(value, { stream: true });
-        const lines = raw.split("\n").filter(l => l.startsWith("data: "));
-        for (const line of lines) {
-          try {
-            const json = JSON.parse(line.replace("data: ", ""));
-            if (json.error) { toast.error(json.error); break; }
-            if (json.chunk) {
-              fullText += json.chunk;
-              setConvertedCode(fullText);
-            }
-            if (json.done && user) {
-              await supabase.from("converter_history").insert([{
-                user_id: user.id,
-                user_email: user.email,
-                source_code: code,
-                target_lang: targetLanguage,
-                converted_code: fullText
-              }]);
-              fetchHistory();
-              toast.success("Conversion complete! ✨");
-            }
-          } catch { /* skip malformed */ }
-        }
-      }
+      
+      toast.success("Conversion complete! ✨");
     } catch (error) {
-      toast.error("Conversion failed");
+      if (error.response?.status === 429) {
+        toast.warning(error.response.data.message || "Daily limit reached. Upgrade to Premium.");
+      } else {
+        toast.error("Conversion failed");
+      }
     } finally {
       setLoading(false);
     }

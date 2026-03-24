@@ -105,81 +105,37 @@ export default function HelpSection() {
 
       const res = await fetch("https://ai-powered-mentor-platform.onrender.com/api/chat", {
         method: "POST",
-        headers: {
+        headers: { 
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ message: msgText }),
       });
 
-      // Handle non-streaming responses (navigation redirects, errors)
-      const contentType = res.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        const data = await res.json();
-        if (res.status === 429) {
-          toast.warning(data.message || "Daily limit reached. Upgrade to Premium.");
-          setIsTyping(false);
-          return;
-        }
-        if (!res.ok) throw new Error(data.error || "Failed to connect");
-        // Navigation reply
-        const botMsg = { role: "bot", text: data.reply };
-        setMessages(prev => [...prev, botMsg]);
-        if (user) {
-          await supabase.from("chat_messages").insert([
-            { user_id: user.id, user_email: user.email, role: "bot", text: data.reply }
-          ]);
-        }
+      const data = await res.json();
+
+      if (res.status === 429) {
+        toast.warning(data.message || "Daily limit reached. Upgrade to Premium.");
         setIsTyping(false);
         return;
       }
 
-      // SSE Streaming response
-      setIsTyping(false);
-      // Add an empty bot message placeholder
-      setMessages(prev => [...prev, { role: "bot", text: "" }]);
+      if (!res.ok) throw new Error(data.error || "Failed to connect");
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = "";
+      const botMsg = { role: "bot", text: data.reply };
+      setMessages(prev => [...prev, botMsg]);
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const raw = decoder.decode(value, { stream: true });
-        const lines = raw.split("\n").filter(l => l.startsWith("data: "));
-
-        for (const line of lines) {
-          try {
-            const json = JSON.parse(line.replace("data: ", ""));
-            if (json.error) { toast.error(json.error); break; }
-            if (json.done) {
-              // Save full reply to Supabase
-              if (user) {
-                await supabase.from("chat_messages").insert([
-                  { user_id: user.id, user_email: user.email, role: "bot", text: fullText }
-                ]);
-              }
-            }
-            if (json.chunk) {
-              fullText += json.chunk;
-              // Update the last bot message live
-              setMessages(prev => {
-                const updated = [...prev];
-                updated[updated.length - 1] = { role: "bot", text: fullText };
-                return updated;
-              });
-            }
-          } catch { /* skip malformed lines */ }
-        }
+      if (user) {
+        await supabase.from("chat_messages").insert([
+          { user_id: user.id, user_email: user.email, role: "bot", text: data.reply }
+        ]);
       }
     } catch (err) {
       toast.error("AI connection failed");
+    } finally {
       setIsTyping(false);
     }
   };
-
 
   const clearChat = async () => {
     if (user) {
