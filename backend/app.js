@@ -16,7 +16,19 @@ const model = genAI.getGenerativeModel({
     "Keep your responses short, clear, and to the point — avoid lengthy explanations unless specifically asked. " +
     "Break down complex topics simply. Use encouraging language and be empathetic. " +
     "Never be harsh or dismissive. Celebrate the user's curiosity and learning journey.",
+  generationConfig: {
+    maxOutputTokens: 300, // ~200 words — keeps replies short and fast
+  },
 });
+
+// Hard timeout wrapper — rejects if AI takes more than `ms` milliseconds
+const withTimeout = (promise, ms) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`AI response timed out after ${ms}ms`)), ms)
+    ),
+  ]);
 
 // Initialize Supabase Admin (using Service Role for rate limiting bypass/safety)
 const supabase = createClient(
@@ -131,20 +143,34 @@ app.post("/api/chat", checkRateLimit, async (req, res) => {
     return res.status(200).json({ reply: "navigate::/code-debugger" });
   }
 
-  // Pure AI Chat
+  // Streaming AI Chat (SSE)
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
   try {
-    const result = await model.generateContent({
+    const streamResult = await model.generateContentStream({
       contents: [{ role: "user", parts: [{ text: message }] }],
     });
 
-    const text = result.response.text();
+    let fullText = "";
+    for await (const chunk of streamResult.stream) {
+      const chunkText = chunk.text();
+      fullText += chunkText;
+      res.write(`data: ${JSON.stringify({ chunk: chunkText })}\n\n`);
+    }
+
+    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+    res.end();
+
     await logUsage(req.user.id, "chat");
-    res.status(200).json({ reply: text });
   } catch (error) {
-    console.error("Chat error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    console.error("Chat stream error:", error);
+    res.write(`data: ${JSON.stringify({ error: "Something went wrong" })}\n\n`);
+    res.end();
   }
 });
+
 
 app.post("/debug-code", checkRateLimit, async (req, res) => {
   const { code } = req.body;
@@ -152,17 +178,29 @@ app.post("/debug-code", checkRateLimit, async (req, res) => {
 
   const prompt = `You are an expert code debugger & developer. Identify bugs and give corrected version.\n\n${code}\n\nRespond with: 1. Bug Explanation, 2. Fixed Code`;
 
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
   try {
-    const result = await model.generateContent({
+    const streamResult = await model.generateContentStream({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    const debugOutput = result.response.text();
+    let fullText = "";
+    for await (const chunk of streamResult.stream) {
+      const chunkText = chunk.text();
+      fullText += chunkText;
+      res.write(`data: ${JSON.stringify({ chunk: chunkText })}\n\n`);
+    }
+
+    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+    res.end();
     await logUsage(req.user.id, "debug");
-    res.json({ result: debugOutput });
   } catch (err) {
-    console.error("Debug error:", err);
-    res.status(500).json({ error: "AI Debugging Failed" });
+    console.error("Debug stream error:", err);
+    res.write(`data: ${JSON.stringify({ error: "AI Debugging Failed" })}\n\n`);
+    res.end();
   }
 });
 
@@ -174,17 +212,29 @@ app.post("/convert-code", checkRateLimit, async (req, res) => {
 
   const prompt = `Convert the following ${fromLang} code to ${toLang}:\n\n\`\`\`${fromLang}\n${sourceCode}\n\`\`\``;
 
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
   try {
-    const result = await model.generateContent({
+    const streamResult = await model.generateContentStream({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    const convertedCode = result.response.text();
+    let fullText = "";
+    for await (const chunk of streamResult.stream) {
+      const chunkText = chunk.text();
+      fullText += chunkText;
+      res.write(`data: ${JSON.stringify({ chunk: chunkText })}\n\n`);
+    }
+
+    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+    res.end();
     await logUsage(req.user.id, "convert");
-    res.json({ convertedCode });
   } catch (err) {
-    console.error("Convert error:", err);
-    res.status(500).json({ error: "Conversion failed." });
+    console.error("Convert stream error:", err);
+    res.write(`data: ${JSON.stringify({ error: "Conversion failed." })}\n\n`);
+    res.end();
   }
 });
 
