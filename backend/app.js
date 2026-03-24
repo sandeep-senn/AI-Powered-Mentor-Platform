@@ -9,7 +9,8 @@ dotenv.config();
 
 const port = process.env.PORT || 5000;
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
+// Chat model — gentle mentor tone, short replies
+const chatModel = genAI.getGenerativeModel({
   model: "gemini-2.5-flash",
   systemInstruction:
     "You are a kind, patient, and encouraging AI mentor. Always reply in a warm, gentle, and supportive tone. " +
@@ -17,9 +18,15 @@ const model = genAI.getGenerativeModel({
     "Break down complex topics simply. Use encouraging language and be empathetic. " +
     "Never be harsh or dismissive. Celebrate the user's curiosity and learning journey.",
   generationConfig: {
-    maxOutputTokens: 300, // ~200 words — keeps replies short and fast
+    maxOutputTokens: 300, // ~200 words — keeps chat replies short and fast
   },
 });
+
+// Code model — no token limit, full output needed for debug/convert
+const codeModel = genAI.getGenerativeModel({
+  model: "gemini-2.5-flash",
+});
+
 
 // Hard timeout wrapper — rejects if AI takes more than `ms` milliseconds
 const withTimeout = (promise, ms) =>
@@ -149,7 +156,7 @@ app.post("/api/chat", checkRateLimit, async (req, res) => {
   res.setHeader("Connection", "keep-alive");
 
   try {
-    const streamResult = await model.generateContentStream({
+    const streamResult = await chatModel.generateContentStream({
       contents: [{ role: "user", parts: [{ text: message }] }],
     });
 
@@ -183,7 +190,7 @@ app.post("/debug-code", checkRateLimit, async (req, res) => {
   res.setHeader("Connection", "keep-alive");
 
   try {
-    const streamResult = await model.generateContentStream({
+    const streamResult = await codeModel.generateContentStream({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
@@ -217,7 +224,7 @@ app.post("/convert-code", checkRateLimit, async (req, res) => {
   res.setHeader("Connection", "keep-alive");
 
   try {
-    const streamResult = await model.generateContentStream({
+    const streamResult = await codeModel.generateContentStream({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
