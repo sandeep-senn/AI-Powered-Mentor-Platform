@@ -145,7 +145,7 @@ export default function CodeDebugger() {
               {loading ? (
                 <div className="flex flex-col items-center justify-center h-full text-zinc-500 gap-4">
                    <div className="w-16 h-16 rounded-full border-4 border-red-600 border-t-transparent animate-spin" />
-                   <p className="font-mono text-sm animate-pulse">Running diagnostics...</p>
+                   <p className="font-foreground text-sm animate-pulse">Running diagnostics...</p>
                 </div>
               ) : diagnostics ? (
                 <div className="prose prose-sm dark:prose-invert max-w-none prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-white/5">
