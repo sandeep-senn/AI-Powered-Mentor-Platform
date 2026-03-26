@@ -114,6 +114,13 @@ const logUsage = async (userId, feature) => {
 
 // --- Routes ---
 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.post("/api/chat", checkRateLimit, async (req, res) => {
   const { message } = req.body;
   if (!message) return res.status(400).json({ error: "Message is required" });
