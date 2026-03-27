@@ -17,13 +17,13 @@ import {
 const roadmaps = [
   { title: "Data Structures and Algorithms", img: dsa },
   { title: "DBMS", img: dbms },
-  { title: "MERN Stack", img: mern },
+  { title: "MERN Stack", img: ml },
   { title: "Java Full Stack", img: java },
   { title: "System Design", img: sd },
   { title: "Cloud Computing", img: cloud },
   { title: "Computer Networks", img: cn },
   { title: "Low Level Design", img: lld },
-  { title: "Machine Learning ", img: ml },
+  { title: "Machine Learning ", img: mern },
   { title: "DevOps", img: dev },
 ];
 
