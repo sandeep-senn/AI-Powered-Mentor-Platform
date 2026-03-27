@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Calendar, Shield, Activity, Award, Code2, Bug, MessageSquare } from "lucide-react";
+import { Mail, Calendar, Shield, Activity, Award, Code2, Bug, MessageSquare, Lock, Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabase";
+import { toast } from "react-toastify";
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, updatePassword } = useAuth();
   const [stats, setStats] = useState({ chat: 0, convert: 0, debug: 0 });
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   useEffect(() => {
     if (user) fetchUserStats();
@@ -35,6 +39,33 @@ export default function Profile() {
     { label: "Code Conversions", value: stats.convert, icon: Code2, color: "text-blue-500", bg: "bg-blue-500/10" },
     { label: "Bugs Analyzed", value: stats.debug, icon: Bug, color: "text-red-500", bg: "bg-red-500/10" },
   ];
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const { error } = await updatePassword(newPassword);
+      if (error) throw error;
+      toast.success("Password changed successfully");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      toast.error(error.message || "Could not change password");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-[#09090b] pt-32 pb-20 px-6 transition-colors duration-500">
@@ -121,6 +152,45 @@ export default function Profile() {
                  </div>
               </div>
            </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white dark:bg-zinc-950/20 border border-zinc-200 dark:border-white/5 rounded-[2rem] p-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <Lock className="text-indigo-500" />
+            <h2 className="text-xl font-bold">Change Password</h2>
+          </div>
+
+          <form onSubmit={handleChangePassword} className="space-y-4 max-w-xl">
+            <input
+              type="password"
+              placeholder="New password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              className="w-full h-12 px-4 bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/10 focus:border-indigo-500/50 rounded-xl outline-none text-sm"
+            />
+            <input
+              type="password"
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="w-full h-12 px-4 bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/10 focus:border-indigo-500/50 rounded-xl outline-none text-sm"
+            />
+            <button
+              type="submit"
+              disabled={passwordLoading}
+              className="h-11 px-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-[10px] uppercase tracking-widest"
+            >
+              {passwordLoading ? <Loader2 className="animate-spin" size={16} /> : <Lock size={16} />}
+              <span>{passwordLoading ? "Updating..." : "Update Password"}</span>
+            </button>
+          </form>
         </motion.div>
 
       </div>

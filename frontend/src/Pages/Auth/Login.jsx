@@ -10,7 +10,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const { signIn, forgotPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -25,6 +26,24 @@ export default function Login() {
       toast.error(error.message || "Sign in failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Enter your email first");
+      return;
+    }
+
+    setForgotLoading(true);
+    try {
+      const { error } = await forgotPassword(email);
+      if (error) throw error;
+      toast.success("Password reset link sent to your email");
+    } catch (error) {
+      toast.error(error.message || "Could not send reset link");
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -94,7 +113,14 @@ export default function Login() {
             <div className="space-y-2">
               <div className="flex items-center justify-between ml-1">
                 <label className="text-xs font-bold uppercase tracking-widest text-zinc-500">Security Key</label>
-                <button type="button" className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors tracking-widest uppercase">Forgot Password?</button>
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={forgotLoading}
+                  className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors tracking-widest uppercase disabled:opacity-60"
+                >
+                  {forgotLoading ? "Sending..." : "Forgot Password?"}
+                </button>
               </div>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors" size={18} />

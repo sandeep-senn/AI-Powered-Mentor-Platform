@@ -10,6 +10,7 @@ import Login from "./Pages/Auth/Login";
 import Signup from "./Pages/Auth/Signup";
 import Profile from "./Pages/Auth/Profile";
 import SettingsPage from "./Pages/Auth/Settings";
+import ResetPassword from "./Pages/Auth/ResetPassword";
 import { useAuth } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,7 +27,7 @@ const ProtectedRoute = ({ children }) => {
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbar = ["/login", "/signup"].includes(location.pathname);
+  const hideNavbar = ["/login", "/signup", "/reset-password"].includes(location.pathname);
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
@@ -38,6 +39,7 @@ function AppContent() {
           <Route path="/features" element={<Feature />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/contact" element={<Contact />} />
           
           <Route path="/learn" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
