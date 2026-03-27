@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Lock, ArrowRight } from "lucide-react";
+import { Loader2, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { updatePassword } = useAuth();
   const navigate = useNavigate();
@@ -55,25 +57,41 @@ export default function ResetPassword() {
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="New password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full h-12 pl-12 pr-4 bg-white/[0.03] border border-white/10 focus:border-indigo-500/50 rounded-xl outline-none text-sm"
+              className="w-full h-12 pl-12 pr-12 bg-white/[0.03] border border-white/10 focus:border-indigo-500/50 rounded-xl outline-none text-sm"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-indigo-400 transition-colors"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full h-12 pl-12 pr-4 bg-white/[0.03] border border-white/10 focus:border-indigo-500/50 rounded-xl outline-none text-sm"
+              className="w-full h-12 pl-12 pr-12 bg-white/[0.03] border border-white/10 focus:border-indigo-500/50 rounded-xl outline-none text-sm"
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-indigo-400 transition-colors"
+              aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           <button
