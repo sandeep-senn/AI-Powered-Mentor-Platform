@@ -34,7 +34,7 @@ const features = [
     title: 'Skill Roadmaps',
     description: 'Follow structured learning journeys built to take you from basics to real-world fluency.',
     icon: <Puzzle size={32} className="text-green-600 dark:text-green-400" />,
-    route: '/learn',
+    route: '/roadmap',
     colSpan: 'md:col-span-2 lg:col-span-1',
     bgClass: 'bg-green-50/50 dark:bg-green-950/20 hover:bg-green-50 dark:hover:bg-green-900/40',
   },
