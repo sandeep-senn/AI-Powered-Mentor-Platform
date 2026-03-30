@@ -79,7 +79,7 @@ const Learn = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 md:py-20 px-6 md:px-16 bg-white text-center">
+    <div className="min-h-screen py-12 md:py-24 px-6 md:px-16 bg-white text-center">
       <h2 className="text-4xl font-bold mb-8 text-center text-gray-900">Start Learning</h2>
 
       {data.map((section, catIndex) => (
