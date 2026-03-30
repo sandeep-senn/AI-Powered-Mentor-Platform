@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "r
 import Navbar from "./components/Navbar";
 import Home from "./Pages/Home";
 import CodeConvertor from "./Pages/CodeConvertor";
+import Learn from "./Pages/Learn";
 import CodeDebugger from "./Pages/CodeDebugger";
 import HelpSection from "./Pages/HelpSection";
 import Contact from "./components/Contact";
@@ -42,7 +43,8 @@ function AppContent() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/contact" element={<Contact />} />
           
-          <Route path="/learn" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
+          <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
+          <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
           <Route path="/code-convertor" element={<ProtectedRoute><CodeConvertor /></ProtectedRoute>} />
           <Route path="/code-debugger" element={<ProtectedRoute><CodeDebugger /></ProtectedRoute>} />
           <Route path="/help" element={<ProtectedRoute><HelpSection /></ProtectedRoute>} />
