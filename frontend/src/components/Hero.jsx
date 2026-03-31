@@ -48,7 +48,7 @@ const Hero = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-4xl md:text-6xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mb-6 leading-tight"
           >
-            Master Code Faster with an <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">AI Mentor</span>
+            Master Code Faster with an <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">AI Mentor</span>
           </motion.h1>
           
           <motion.p 
