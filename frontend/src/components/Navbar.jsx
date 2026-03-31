@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Rocket, LogOut, User, Settings, ChevronDown, Sparkles } from "lucide-react";
+import {
+  Menu,
+  X,
+  Rocket,
+  LogOut,
+  User,
+  Settings,
+  ChevronDown,
+  Sparkles,
+} from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
 import { useAuth } from "../context/AuthContext";
@@ -20,28 +29,34 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+
   const location = useLocation();
-  const { user, signOut, isPremium } = useAuth();
-  const [planName, setPlanName] = useState('free');
+  const { user, signOut } = useAuth();
+  const [planName] = useState("free");
+
+  // Scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Click outside dropdown
   useEffect(() => {
-    const handleWindowClick = () => setServicesOpen(false);
-    window.addEventListener("click", handleWindowClick);
-    return () => window.removeEventListener("click", handleWindowClick);
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".services-dropdown")) {
+        setServicesOpen(false);
+      }
+    };
+    window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
     try {
       await signOut();
       toast.success("Logged out successfully");
-    } catch (err) {
+    } catch {
       toast.error("Logout failed");
     }
   };
@@ -59,39 +74,39 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-      scrolled ? "py-4" : "py-6"
-    }`}>
-      <div className="container mx-auto px-4 flex justify-center">
-        <div 
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className={`flex items-center justify-between w-full max-w-4xl px-6 py-3 rounded-full border transition-all duration-500 shadow-lg ${
-            scrolled 
-              ? "glass dark:bg-black/60 bg-white/80 border-white/20 dark:border-white/10" 
+    <nav
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
+        scrolled ? "py-3 sm:py-4" : "py-4 sm:py-6"
+      }`}
+    >
+      <div className="w-full flex justify-center px-4">
+        <div
+          className={`flex items-center justify-between w-full max-w-6xl px-4 sm:px-6 py-3 rounded-full border transition-all duration-500 shadow-lg ${
+            scrolled
+              ? "glass dark:bg-black/60 bg-white/80 border-white/20 dark:border-white/10"
               : "bg-transparent border-transparent"
           }`}
         >
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:rotate-12 transition-transform duration-300">
-               <Rocket size={20} />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
+              <Rocket size={20} />
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+            <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
               Mentor<span className="text-zinc-900 dark:text-white">AI</span>
             </span>
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                   location.pathname === link.path
                     ? "bg-indigo-600 text-white"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-indigo-600 dark:hover:text-white"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 }`}
               >
                 {link.name}
@@ -99,32 +114,30 @@ const Navbar = () => {
             ))}
 
             {/* Services Dropdown */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <div className="relative services-dropdown">
               <button
-                type="button"
-                onClick={() => setServicesOpen((open) => !open)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 outline-none ${
-                  services.some((s) => s.path === location.pathname)
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-indigo-600 dark:hover:text-white"
-                }`}
+                onClick={() => setServicesOpen(!servicesOpen)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm"
               >
                 Services
                 <ChevronDown
                   size={14}
-                  className={`opacity-50 transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
+                  className={`transition ${
+                    servicesOpen ? "rotate-180" : ""
+                  }`}
                 />
               </button>
+
               {servicesOpen && (
-                <div className="absolute right-0 mt-2 w-48 glass p-2 rounded-2xl border border-white/10 shadow-xl">
-                  {services.map((service) => (
+                <div className="absolute right-0 mt-2 w-48 glass p-2 rounded-2xl shadow-xl z-[200]">
+                  {services.map((s) => (
                     <Link
-                      key={service.name}
-                      to={service.path}
+                      key={s.name}
+                      to={s.path}
                       onClick={() => setServicesOpen(false)}
-                      className="flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-indigo-600 hover:text-white"
+                      className="block px-3 py-2 rounded-xl hover:bg-indigo-600 hover:text-white"
                     >
-                      {service.name}
+                      {s.name}
                     </Link>
                   ))}
                 </div>
@@ -132,83 +145,63 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Actions */}
+          {/* Right Section */}
           <div className="flex items-center gap-2">
             <ModeToggle />
-            <div className="hidden md:block h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-1" />
-            
+
             {user ? (
-               <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="rounded-full p-2 h-10 w-10 overflow-hidden border border-white/10">
-                       <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} alt="avatar" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 glass p-2 rounded-2xl border-white/10 mt-2">
-                    <div className="px-3 py-2">
-                       <div className="flex items-center justify-between mb-1">
-                         <p className="text-xs font-medium text-zinc-500 uppercase tracking-tighter">My Account</p>
-                         {planName === 'silver' && (
-                           <span className="px-2 py-0.5 bg-gradient-to-r from-slate-400 to-slate-600 text-[8px] font-black text-white rounded-full uppercase tracking-widest shadow-lg shadow-slate-500/20">
-                             SILVER
-                           </span>
-                         )}
-                         {planName === 'gold' && (
-                           <span className="px-2 py-0.5 bg-gradient-to-r from-amber-400 to-orange-500 text-[8px] font-black text-white rounded-full uppercase tracking-widest shadow-lg shadow-orange-500/20">
-                             GOLD
-                           </span>
-                         )}
-                       </div>
-                       <p className="text-sm font-bold truncate">{user.email}</p>
-                    </div>
-                    <DropdownMenuSeparator className="bg-white/10" />
-                    {planName !== 'gold' && (
-                      <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-amber-500 focus:text-white group cursor-pointer">
-                        <Link to="/upgrade" className="flex items-center w-full">
-                          <Sparkles size={16} className="mr-2 text-amber-500 group-hover:text-white transition-colors" /> {planName === 'free' ? 'Upgrade to Pro' : 'Upgrade your Plan'}
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-indigo-600 group cursor-pointer">
-                       <Link to="/profile" className="flex items-center w-full">
-                          <User size={16} className="mr-2 opacity-50 group-hover:opacity-100" /> Profile
-                       </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-indigo-600 group cursor-pointer">
-                       <Link to="/settings" className="flex items-center w-full">
-                          <Settings size={16} className="mr-2 opacity-50 group-hover:opacity-100" /> Settings
-                       </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-white/10" />
-                    <DropdownMenuItem 
-                      className="rounded-xl p-3 focus:bg-red-600 focus:text-white group text-red-500 cursor-pointer"
-                      onClick={() => setShowLogoutConfirm(true)}
-                    >
-                       <LogOut size={16} className="mr-2" /> Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-               </DropdownMenu>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login">
-                  <Button variant="ghost" size="sm" className="rounded-full px-4 font-medium">
-                    Login
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="rounded-full p-1 h-9 w-9 sm:h-10 sm:w-10">
+                    <img
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`}
+                      alt="avatar"
+                    />
                   </Button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent className="w-56 p-2 mt-2 rounded-2xl">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="flex items-center">
+                      <User size={16} className="mr-2" /> Profile
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="flex items-center">
+                      <Settings size={16} className="mr-2" /> Settings
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    onClick={() => setShowLogoutConfirm(true)}
+                    className="text-red-500"
+                  >
+                    <LogOut size={16} className="mr-2" /> Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost">Login</Button>
                 </Link>
                 <Link to="/signup">
-                  <Button size="sm" className="rounded-full px-6 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 font-medium">
+                  <Button className="bg-indigo-600 text-white">
                     Sign Up
                   </Button>
                 </Link>
-              </div>
+              </>
             )}
-            
+
             {/* Mobile Toggle */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="md:hidden w-10 h-10 flex items-center justify-center"
             >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
+              {isOpen ? <X /> : <Menu />}
             </button>
           </div>
         </div>
@@ -218,10 +211,10 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-24 left-4 right-4 md:hidden glass rounded-3xl p-6 shadow-2xl z-[101]"
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full mt-4 left-4 right-4 md:hidden glass rounded-3xl p-6 shadow-2xl"
           >
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
@@ -229,67 +222,57 @@ const Navbar = () => {
                   key={link.name}
                   to={link.path}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-base font-medium transition-all ${
-                    location.pathname === link.path
-                      ? "bg-indigo-600 text-white"
-                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  }`}
+                  className="px-4 py-3 rounded-xl hover:bg-zinc-100"
                 >
                   {link.name}
                 </Link>
               ))}
-              
-              <div className="px-4 py-2">
-                 <p className="text-xs font-bold text-zinc-500 uppercase mb-2">Our Services</p>
-                 <div className="grid grid-cols-2 gap-2">
-                    {services.map((s) => (
-                      <Link
-                        key={s.name}
-                        to={s.path}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center justify-center p-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all border border-transparent hover:border-white/5 bg-zinc-900/40 text-sm font-medium"
-                      >
-                        {s.name}
-                      </Link>
-                    ))}
-                 </div>
+
+              <div>
+                <p className="text-xs mb-2">Services</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {services.map((s) => (
+                    <Link
+                      key={s.name}
+                      to={s.path}
+                      onClick={() => setIsOpen(false)}
+                      className="p-3 rounded-xl bg-zinc-100 text-center"
+                    >
+                      {s.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
 
-              <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 my-1" />
               {user ? (
-                 <Button onClick={handleLogout} variant="destructive" className="w-full rounded-2xl py-6">
-                   Logout
-                 </Button>
+                <Button onClick={handleLogout}>Logout</Button>
               ) : (
-                <div className="flex flex-col gap-2">
-                  <Link to="/login" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full rounded-2xl py-6">
-                      Login
-                    </Button>
+                <>
+                  <Link to="/login">
+                    <Button className="w-full">Login</Button>
                   </Link>
-                  <Link to="/signup" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full rounded-2xl bg-indigo-600 py-6">
+                  <Link to="/signup">
+                    <Button className="w-full bg-indigo-600 text-white">
                       Sign Up
                     </Button>
                   </Link>
-                </div>
+                </>
               )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      <ConfirmModal 
+
+      <ConfirmModal
         isOpen={showLogoutConfirm}
         onClose={() => setShowLogoutConfirm(false)}
         onConfirm={handleLogout}
         title="Sign Out?"
-        description="Are you sure you want to end your current session?"
+        description="Are you sure?"
         confirmText="Sign Out"
-        variant="danger"
       />
     </nav>
   );
-}
-;
+};
 
 export default Navbar;
