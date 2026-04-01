@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Send, Bot, Trash2, Sparkles, User, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "react-toastify";
@@ -14,6 +15,7 @@ export default function HelpSection() {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const scrollRef = useRef(null);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Load chat history (Robust Version)
   useEffect(() => {
@@ -121,6 +123,12 @@ export default function HelpSection() {
       }
 
       if (!res.ok) throw new Error(data.error || "Failed to connect");
+
+      if (typeof data.reply === "string" && data.reply.startsWith("navigate::")) {
+        const targetRoute = data.reply.replace("navigate::", "").trim();
+        navigate(targetRoute);
+        return;
+      }
 
       const botMsg = { role: "bot", text: data.reply };
       setMessages(prev => [...prev, botMsg]);
