@@ -34,6 +34,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "https://ai-powered-mentor-platform-bven.vercel.app",
+  "https://getmentorai.vercel.app"
 ];
 
 app.use(
