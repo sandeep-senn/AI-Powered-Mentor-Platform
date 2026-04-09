@@ -51,24 +51,24 @@ export default function Upgrade() {
   ];
 
   return (
-    <div className="min-h-screen pt-32 pb-24 px-4 bg-[#020202] text-white flex flex-col items-center">
+    <div className="min-h-screen pt-32 pb-24 px-4 bg-zinc-50 dark:bg-[#020202] text-zinc-900 dark:text-white flex flex-col items-center transition-colors duration-500">
       <div className="w-full max-w-6xl flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <Link to="/" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-8 group">
+          <Link to="/" className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors mb-8 group">
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-bold uppercase tracking-widest">Back to Platform</span>
           </Link>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-zinc-100 via-zinc-200 to-zinc-500">
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-zinc-950 via-zinc-700 to-zinc-400 dark:from-zinc-100 dark:via-zinc-200 dark:to-zinc-500">
             Choose Your <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-fuchsia-500 dark:from-indigo-400 dark:to-purple-500">
               Learning Velocity
             </span>
           </h1>
-          <p className="text-zinc-500 text-base md:text-lg font-medium max-w-xl mx-auto leading-relaxed">
+          <p className="text-zinc-600 dark:text-zinc-500 text-base md:text-lg font-medium max-w-xl mx-auto leading-relaxed">
             Select the plan that fits your coding intensity. Upgrade or downgrade anytime.
           </p>
         </motion.div>
@@ -82,8 +82,8 @@ export default function Upgrade() {
               transition={{ delay: tier.id === "silver" ? 0.1 : tier.id === "gold" ? 0.2 : 0 }}
               className={`relative flex flex-col p-8 rounded-[2.5rem] border transition-all duration-300 ${
                 tier.isCurrent
-                  ? "bg-white/5 border-white/10 ring-2 ring-indigo-500/50"
-                  : "bg-zinc-900/30 border-white/5 hover:border-white/10"
+                  ? "bg-white dark:bg-white/5 border-zinc-200 dark:border-white/10 ring-2 ring-indigo-500/50 shadow-xl"
+                  : "bg-white/80 dark:bg-zinc-900/30 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/10 shadow-lg"
               } ${tier.id === "gold" ? "md:scale-105 z-10" : ""}`}
             >
               {tier.id === "gold" && (
@@ -115,15 +115,15 @@ export default function Upgrade() {
                       ? "bg-amber-500/10 text-amber-500"
                       : tier.id === "silver"
                         ? "bg-indigo-500/10 text-indigo-500"
-                        : "bg-zinc-800 text-zinc-400"
+                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
                   }`}
                 >
                   <ShieldCheck size={16} />
                   {tier.limit}
                 </div>
                 {tier.features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-3 text-zinc-400 text-sm pl-2">
-                    <Check size={14} className={tier.id === "free" ? "text-zinc-700" : "text-emerald-500"} />
+                  <div key={index} className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400 text-sm pl-2">
+                    <Check size={14} className={tier.id === "free" ? "text-zinc-500 dark:text-zinc-700" : "text-emerald-500"} />
                     <span>{feature}</span>
                   </div>
                 ))}
@@ -134,10 +134,10 @@ export default function Upgrade() {
                 disabled={tier.isCurrent || tier.id === "free"}
                 className={`w-full py-4 rounded-2xl font-bold text-[10px] tracking-widest uppercase transition-all flex items-center justify-center gap-2 ${
                   tier.isCurrent || tier.id === "free"
-                    ? "bg-zinc-800/50 text-zinc-500 cursor-default"
+                    ? "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-500 cursor-default"
                     : tier.id === "gold"
                       ? "bg-gradient-to-r from-amber-400 to-orange-600 hover:from-amber-300 hover:to-orange-500 text-black shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98]"
-                      : "bg-white text-black hover:bg-zinc-200 shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                      : "bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                 }`}
               >
                 {tier.isCurrent ? (
