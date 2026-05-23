@@ -149,7 +149,7 @@ const checkRateLimit = async (req, res, next) => {
   }
 
   const plan = profile?.plan_name || "free";
-  const currentLimit = PLAN_LIMITS[plan] ?? 3;
+  const currentLimit = PLAN_LIMITS[plan] ?? 10;
 
   if (count >= currentLimit) {
     const nextPlan = plan === "free" ? "Silver" : plan === "silver" ? "Gold" : null;
