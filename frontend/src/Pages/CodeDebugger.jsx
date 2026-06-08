@@ -148,7 +148,17 @@ export default function CodeDebugger() {
                    <p className="font-foreground text-sm animate-pulse">Running diagnostics...</p>
                 </div>
               ) : diagnostics ? (
-                <div className="prose prose-sm dark:prose-invert max-w-none prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-white/5">
+                    <div className="
+      prose prose-sm max-w-none dark:prose-invert
+      prose-headings:text-white
+      prose-p:text-zinc-100
+      prose-strong:text-white
+      prose-code:text-emerald-300
+      prose-li:text-zinc-100
+      prose-pre:bg-zinc-900
+      prose-pre:border
+      prose-pre:border-white/10
+    ">
                    <ReactMarkdown>{diagnostics}</ReactMarkdown>
                 </div>
               ) : (
