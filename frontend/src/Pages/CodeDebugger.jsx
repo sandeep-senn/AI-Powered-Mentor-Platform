@@ -98,7 +98,7 @@ export default function CodeDebugger() {
                <div className="p-3 bg-red-600 rounded-2xl text-white shadow-xl shadow-red-500/20">
                   <Bug size={24} />
                </div>
-               <h1 className="text-4xl font-extrabold tracking-tight">AI<span className="text-red-600">Error Analyzer</span></h1>
+               <h1 className="text-4xl font-extrabold tracking-tight">AI <span className="text-red-600">Error Analyzer</span></h1>
             </div>
             <p className="text-zinc-500 font-medium max-w-md">Surface errors faster, understand root causes, and get clearer repair suggestions.</p>
           </div>
